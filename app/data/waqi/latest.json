@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-03-08T02:33:04.662Z",
+  "updated_at": "2026-03-08T04:19:10.975Z",
   "count": 53,
   "source": "WAQI API",
   "cities": [
     {
       "city": "seoul",
-      "aqi": 99,
+      "aqi": 87,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 11:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+09:00",
-        "v": 1772967600
+        "v": 1772971200
       },
       "location": {
         "name": "Seoul (서울)",
@@ -21,18 +21,18 @@
         "url": "https://aqicn.org/city/seoul"
       },
       "pollutants": {
-        "pm25": 99,
-        "pm10": 53,
-        "o3": 27.6,
-        "no2": 23.4,
-        "so2": 5.3,
-        "co": 7.3
+        "pm25": 87,
+        "pm10": 40,
+        "o3": 39.4,
+        "no2": 17.5,
+        "so2": 5.2,
+        "co": 5.9
       },
       "weather": {
-        "temperature": 1.9,
-        "pressure": 1018.6,
-        "humidity": 48.2,
-        "wind": 1.5
+        "temperature": 5,
+        "pressure": 1018.2,
+        "humidity": 30.2,
+        "wind": 2.5
       },
       "attribution": [
         {
@@ -51,12 +51,12 @@
     },
     {
       "city": "busan",
-      "aqi": 63,
+      "aqi": 59,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 11:00:00",
+        "s": "2026-03-08 13:00:00",
         "tz": "+09:00",
-        "v": 1772967600
+        "v": 1772974800
       },
       "location": {
         "name": "Busan (부산)",
@@ -67,12 +67,12 @@
         "url": "https://aqicn.org/city/busan"
       },
       "pollutants": {
-        "pm25": 63,
-        "pm10": 23,
-        "o3": 26.7,
-        "no2": 12.7,
-        "so2": 4.3,
-        "co": 3.6
+        "pm25": 59,
+        "pm10": 20,
+        "o3": 38.5,
+        "no2": 9.1,
+        "so2": 4.5,
+        "co": 3.4
       },
       "weather": {
         "temperature": null,
@@ -93,12 +93,12 @@
     },
     {
       "city": "incheon",
-      "aqi": 80,
+      "aqi": 65,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 11:00:00",
+        "s": "2026-03-08 13:00:00",
         "tz": "+09:00",
-        "v": 1772967600
+        "v": 1772974800
       },
       "location": {
         "name": "Incheon (인천)",
@@ -109,12 +109,12 @@
         "url": "https://aqicn.org/city/incheon"
       },
       "pollutants": {
-        "pm25": 80,
-        "pm10": 39,
-        "o3": 28,
-        "no2": 27.2,
-        "so2": 6.6,
-        "co": 6.2
+        "pm25": 65,
+        "pm10": 36,
+        "o3": 37.6,
+        "no2": 19,
+        "so2": 6,
+        "co": 5.4
       },
       "weather": {
         "temperature": null,
@@ -135,12 +135,12 @@
     },
     {
       "city": "daegu",
-      "aqi": 57,
+      "aqi": 50,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 11:00:00",
+        "s": "2026-03-08 13:00:00",
         "tz": "+09:00",
-        "v": 1772967600
+        "v": 1772974800
       },
       "location": {
         "name": "Daegu (대구)",
@@ -151,12 +151,12 @@
         "url": "https://aqicn.org/city/daegu"
       },
       "pollutants": {
-        "pm25": 57,
-        "pm10": 20,
-        "o3": 32.8,
-        "no2": 14.2,
-        "so2": 4.2,
-        "co": 5.2
+        "pm25": 50,
+        "pm10": 22,
+        "o3": 40.3,
+        "no2": 10,
+        "so2": 3.6,
+        "co": 4.7
       },
       "weather": {
         "temperature": 7.1,
@@ -177,12 +177,12 @@
     },
     {
       "city": "daejeon",
-      "aqi": 74,
+      "aqi": 65,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 11:00:00",
+        "s": "2026-03-08 13:00:00",
         "tz": "+09:00",
-        "v": 1772967600
+        "v": 1772974800
       },
       "location": {
         "name": "Daejeon (대전)",
@@ -193,12 +193,12 @@
         "url": "https://aqicn.org/city/daejeon"
       },
       "pollutants": {
-        "pm25": 74,
-        "pm10": 30,
-        "o3": 29.6,
-        "no2": 12.4,
-        "so2": 4.8,
-        "co": 5.2
+        "pm25": 65,
+        "pm10": 12,
+        "o3": 34.6,
+        "no2": 9.9,
+        "so2": 4.9,
+        "co": 5.3
       },
       "weather": {
         "temperature": null,
@@ -222,9 +222,9 @@
       "aqi": 53,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 11:00:00",
+        "s": "2026-03-08 13:00:00",
         "tz": "+09:00",
-        "v": 1772967600
+        "v": 1772974800
       },
       "location": {
         "name": "Gwangju (광주시)",
@@ -236,11 +236,11 @@
       },
       "pollutants": {
         "pm25": 53,
-        "pm10": 23,
-        "o3": 27.3,
-        "no2": 12.7,
+        "pm10": 21,
+        "o3": 33.9,
+        "no2": 9.8,
         "so2": 4.2,
-        "co": 5.7
+        "co": 5.4
       },
       "weather": {
         "temperature": 5.7,
@@ -261,12 +261,12 @@
     },
     {
       "city": "ulsan",
-      "aqi": 65,
+      "aqi": 59,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 11:00:00",
+        "s": "2026-03-08 13:00:00",
         "tz": "+09:00",
-        "v": 1772967600
+        "v": 1772974800
       },
       "location": {
         "name": "Ulsan (울산)",
@@ -277,11 +277,11 @@
         "url": "https://aqicn.org/city/ulsan"
       },
       "pollutants": {
-        "pm25": 65,
-        "pm10": 20,
-        "o3": 37.8,
-        "no2": 8.3,
-        "so2": 3.2,
+        "pm25": 59,
+        "pm10": 22,
+        "o3": 49.2,
+        "no2": 12,
+        "so2": 6.3,
         "co": 3.9
       },
       "weather": {
@@ -303,12 +303,12 @@
     },
     {
       "city": "beijing",
-      "aqi": 154,
+      "aqi": 167,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+08:00",
-        "v": 1772964000
+        "v": 1772971200
       },
       "location": {
         "name": "Beijing (北京)",
@@ -319,18 +319,18 @@
         "url": "https://aqicn.org/city/beijing"
       },
       "pollutants": {
-        "pm25": 154,
-        "pm10": 67,
-        "o3": 13.9,
-        "no2": 13.3,
-        "so2": 2.6,
+        "pm25": 167,
+        "pm10": 82,
+        "o3": 23.2,
+        "no2": 13.8,
+        "so2": 3.6,
         "co": 8.2
       },
       "weather": {
-        "temperature": 7,
-        "pressure": 1027,
-        "humidity": 52,
-        "wind": 1.5
+        "temperature": 10,
+        "pressure": 1026,
+        "humidity": 39,
+        "wind": 2.5
       },
       "attribution": [
         {
@@ -345,12 +345,12 @@
     },
     {
       "city": "shanghai",
-      "aqi": 50,
+      "aqi": 55,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+08:00",
-        "v": 1772964000
+        "v": 1772971200
       },
       "location": {
         "name": "Shanghai (上海)",
@@ -361,18 +361,18 @@
         "url": "https://aqicn.org/city/shanghai"
       },
       "pollutants": {
-        "pm25": 50,
-        "pm10": 20,
-        "o3": 32.5,
-        "no2": 10.1,
-        "so2": 4.1,
+        "pm25": 55,
+        "pm10": 26,
+        "o3": 33.3,
+        "no2": 9.2,
+        "so2": 3.6,
         "co": 1.9
       },
       "weather": {
-        "temperature": 10,
-        "pressure": 1029,
-        "humidity": 57,
-        "wind": 3.6
+        "temperature": 11,
+        "pressure": 1028,
+        "humidity": 43,
+        "wind": 1.5
       },
       "attribution": [
         {
@@ -426,16 +426,16 @@
       },
       "attribution": [
         {
+          "name": "Guangzhou Environmental Protection Bureau (广州市生态环境局)",
+          "url": "http://sthjj.gz.gov.cn/"
+        },
+        {
           "name": "China National Urban air quality real-time publishing platform (全国城市空气质量实时发布平台)",
           "url": "http://106.37.208.233:20035/emcpublish/"
         },
         {
           "name": "U.S. Consulate Guangzhou Air Quality Monitor",
           "url": "https://china.usembassy-china.org.cn/embassy-consulates/guangzhou/u-s-consulate-air-quality-monitor-stateair/"
-        },
-        {
-          "name": "Guangzhou Environmental Protection Bureau (广州市生态环境局)",
-          "url": "http://sthjj.gz.gov.cn/"
         },
         {
           "name": "World Air Quality Index Project",
@@ -445,12 +445,12 @@
     },
     {
       "city": "shenzhen",
-      "aqi": 152,
+      "aqi": 102,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+08:00",
-        "v": 1772964000
+        "v": 1772971200
       },
       "location": {
         "name": "Shenzhen (深圳)",
@@ -461,20 +461,24 @@
         "url": "https://aqicn.org/city/shenzhen"
       },
       "pollutants": {
-        "pm25": 152,
-        "pm10": 69,
-        "o3": 36.2,
-        "no2": 14.2,
-        "so2": 4.1,
-        "co": 6.4
+        "pm25": 102,
+        "pm10": 57,
+        "o3": 47.6,
+        "no2": 10.6,
+        "so2": 4.6,
+        "co": 7.3
       },
       "weather": {
-        "temperature": 21.1,
-        "pressure": 1021.9,
-        "humidity": 74,
-        "wind": 1
+        "temperature": 25.2,
+        "pressure": 1020.4,
+        "humidity": 72.5,
+        "wind": 3.6
       },
       "attribution": [
+        {
+          "name": "Shenzhen Environment Network (深圳人居环境网)",
+          "url": "http://www.szhec.gov.cn/"
+        },
         {
           "name": "Shenzhen Environment Network (深圳人居环境网)",
           "url": "http://meeb.sz.gov.cn/"
@@ -484,10 +488,6 @@
           "url": "http://gdee.gd.gov.cn/"
         },
         {
-          "name": "Shenzhen Environment Network (深圳人居环境网)",
-          "url": "http://www.szhec.gov.cn/"
-        },
-        {
           "name": "World Air Quality Index Project",
           "url": "https://waqi.info/"
         }
@@ -495,12 +495,12 @@
     },
     {
       "city": "chengdu",
-      "aqi": 82,
+      "aqi": 87,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+08:00",
-        "v": 1772964000
+        "v": 1772971200
       },
       "location": {
         "name": "Chengdu (成都)",
@@ -511,24 +511,20 @@
         "url": "https://aqicn.org/city/chengdu"
       },
       "pollutants": {
-        "pm25": 82,
-        "pm10": 28,
-        "o3": 16.7,
-        "no2": 6,
+        "pm25": 87,
+        "pm10": 30,
+        "o3": 20.4,
+        "no2": 6.4,
         "so2": 1.1,
         "co": 4.6
       },
       "weather": {
-        "temperature": 13,
+        "temperature": 14,
         "pressure": 1022,
-        "humidity": 82,
-        "wind": 0.5
+        "humidity": 71,
+        "wind": 2.5
       },
       "attribution": [
-        {
-          "name": "Sichuan Province Environmental Protection Agency (四川省环保重点城市环境空气质量实时监测结果)",
-          "url": "https://sthjt.sc.gov.cn/"
-        },
         {
           "name": "Chengdu Environmental Protection Agency (成都市环境监测中心站_成都市环境监测中心站)",
           "url": "http://sthj.chengdu.gov.cn/"
@@ -542,6 +538,10 @@
           "url": "https://china.usembassy-china.org.cn/embassy-consulates/chengdu/air-quality-monitor/"
         },
         {
+          "name": "Sichuan Province Environmental Protection Agency (四川省环保重点城市环境空气质量实时监测结果)",
+          "url": "https://sthjt.sc.gov.cn/"
+        },
+        {
           "name": "World Air Quality Index Project",
           "url": "https://waqi.info/"
         }
@@ -549,12 +549,12 @@
     },
     {
       "city": "tokyo",
-      "aqi": 39,
+      "aqi": 40,
       "dominentpol": "o3",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+09:00",
-        "v": 1772964000
+        "v": 1772971200
       },
       "location": {
         "name": "Meguro (目黒)",
@@ -565,18 +565,18 @@
         "url": "https://aqicn.org/city/meguro"
       },
       "pollutants": {
-        "pm25": 38,
-        "pm10": 7,
-        "o3": 39.2,
-        "no2": 2.8,
+        "pm25": 30,
+        "pm10": 6,
+        "o3": 40,
+        "no2": 5.6,
         "so2": 1.5,
         "co": 3.4
       },
       "weather": {
-        "temperature": 9,
-        "pressure": 1021.2,
-        "humidity": 30.7,
-        "wind": 0.2
+        "temperature": 10.4,
+        "pressure": 1020.3,
+        "humidity": 29.5,
+        "wind": 0.7
       },
       "attribution": [
         {
@@ -595,12 +595,12 @@
     },
     {
       "city": "osaka",
-      "aqi": 50,
+      "aqi": 42,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+09:00",
-        "v": 1772964000
+        "v": 1772971200
       },
       "location": {
         "name": "Osaka (大阪)",
@@ -611,20 +611,24 @@
         "url": "https://aqicn.org/city/osaka"
       },
       "pollutants": {
-        "pm25": 50,
+        "pm25": 42,
         "pm10": 10,
-        "o3": 39.2,
+        "o3": 38.4,
         "no2": 6.5,
         "so2": 5.8,
-        "co": 3.4
+        "co": 2.3
       },
       "weather": {
-        "temperature": 7,
-        "pressure": 1026,
-        "humidity": 45,
-        "wind": 7.2
+        "temperature": 8,
+        "pressure": 1025,
+        "humidity": 42,
+        "wind": 6.1
       },
       "attribution": [
+        {
+          "name": "Japan Atmospheric Environmental Regional Observation System (環境省大気汚染物質広域監視システム)",
+          "url": "http://soramame.taiki.go.jp/"
+        },
         {
           "name": "Japan Atmospheric Environmental Regional Observation System (環境省大気汚染物質広域監視システム)",
           "url": "https://soramame.env.go.jp/"
@@ -634,10 +638,6 @@
           "url": "http://taiki.kankyo.pref.osaka.jp/taikikanshi/"
         },
         {
-          "name": "Japan Atmospheric Environmental Regional Observation System (環境省大気汚染物質広域監視システム)",
-          "url": "http://soramame.taiki.go.jp/"
-        },
-        {
           "name": "World Air Quality Index Project",
           "url": "https://waqi.info/"
         }
@@ -645,12 +645,12 @@
     },
     {
       "city": "delhi",
-      "aqi": 174,
+      "aqi": 177,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 07:00:00",
+        "s": "2026-03-08 09:00:00",
         "tz": "+05:30",
-        "v": 1772953200
+        "v": 1772960400
       },
       "location": {
         "name": "Major Dhyan Chand National Stadium, Delhi, Delhi, India",
@@ -661,18 +661,18 @@
         "url": "https://aqicn.org/city/delhi/major-dhyan-chand-national-stadium"
       },
       "pollutants": {
-        "pm25": 174,
-        "pm10": 160,
-        "o3": 0.7,
-        "no2": 37.9,
-        "so2": 8.6,
-        "co": 6.7
+        "pm25": 177,
+        "pm10": 168,
+        "o3": 1.3,
+        "no2": 75.8,
+        "so2": 8.3,
+        "co": 4.3
       },
       "weather": {
-        "temperature": 20.400000000000002,
-        "pressure": 985.0857142857142,
-        "humidity": 77.54285714285713,
-        "wind": 0.4571428571428572
+        "temperature": 26.6,
+        "pressure": 985.175,
+        "humidity": 48.25,
+        "wind": 0.675
       },
       "attribution": [
         {
@@ -729,12 +729,12 @@
     },
     {
       "city": "bangkok",
-      "aqi": 77,
+      "aqi": 82,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 11:00:00",
         "tz": "+07:00",
-        "v": 1772964000
+        "v": 1772967600
       },
       "location": {
         "name": "Bangkok",
@@ -745,17 +745,17 @@
         "url": "https://aqicn.org/city/bangkok"
       },
       "pollutants": {
-        "pm25": 77,
-        "pm10": 50,
-        "o3": 18.2,
-        "no2": 7.5,
+        "pm25": 82,
+        "pm10": 32,
+        "o3": 20.1,
+        "no2": 6.4,
         "so2": 0.6,
         "co": 0.1
       },
       "weather": {
-        "temperature": 31,
+        "temperature": 33,
         "pressure": 1017,
-        "humidity": 88,
+        "humidity": 73,
         "wind": 1.5
       },
       "attribution": [
@@ -774,9 +774,9 @@
       "aqi": 30,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+08:00",
-        "v": 1772964000
+        "v": 1772971200
       },
       "location": {
         "name": "South, Singapore",
@@ -788,17 +788,17 @@
       },
       "pollutants": {
         "pm25": 30,
-        "pm10": 20,
-        "o3": 5,
+        "pm10": 19,
+        "o3": 7,
         "no2": null,
         "so2": 2,
         "co": 2
       },
       "weather": {
-        "temperature": 29,
+        "temperature": 33,
         "pressure": 1012,
-        "humidity": 70,
-        "wind": 4.1
+        "humidity": 52,
+        "wind": 5.1
       },
       "attribution": [
         {
@@ -813,12 +813,12 @@
     },
     {
       "city": "hong-kong",
-      "aqi": 72,
+      "aqi": 82,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 11:00:00",
         "tz": "+08:00",
-        "v": 1772964000
+        "v": 1772967600
       },
       "location": {
         "name": "Central, HongKong (中環)",
@@ -829,18 +829,18 @@
         "url": "https://aqicn.org/city/hongkong/central"
       },
       "pollutants": {
-        "pm25": 72,
-        "pm10": 46,
-        "o3": 28.9,
-        "no2": 23.4,
-        "so2": 2.1,
-        "co": 3.8
+        "pm25": 82,
+        "pm10": 52,
+        "o3": 26.2,
+        "no2": 33.8,
+        "so2": 2.4,
+        "co": 4.4
       },
       "weather": {
-        "temperature": 21.2,
-        "pressure": 1021.3,
-        "humidity": 64,
-        "wind": 0.8
+        "temperature": 23.3,
+        "pressure": 1020.3,
+        "humidity": 56.8,
+        "wind": 2.8
       },
       "attribution": [
         {
@@ -855,12 +855,12 @@
     },
     {
       "city": "taipei",
-      "aqi": 57,
+      "aqi": 46,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 10:00:00",
+        "s": "2026-03-08 12:00:00",
         "tz": "+08:00",
-        "v": 1772964000
+        "v": 1772971200
       },
       "location": {
         "name": "Zhongshan, Taiwan (中山)",
@@ -871,18 +871,18 @@
         "url": "https://aqicn.org/city/taiwan/jhongshan"
       },
       "pollutants": {
-        "pm25": 57,
-        "pm10": 30,
-        "o3": 31,
-        "no2": 8.7,
-        "so2": 1.2,
-        "co": 2.8
+        "pm25": 46,
+        "pm10": 28,
+        "o3": 33.2,
+        "no2": 6.7,
+        "so2": 0.9,
+        "co": 2.6
       },
       "weather": {
-        "temperature": 18.5,
-        "pressure": 1023,
-        "humidity": 74.5,
-        "wind": 7.2
+        "temperature": 20,
+        "pressure": 1022,
+        "humidity": 68,
+        "wind": 8.7
       },
       "attribution": [
         {
@@ -939,12 +939,12 @@
     },
     {
       "city": "jakarta",
-      "aqi": 33,
+      "aqi": 32,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 09:00:00",
+        "s": "2026-03-08 10:00:00",
         "tz": "+07:00",
-        "v": 1772960400
+        "v": 1772964000
       },
       "location": {
         "name": "Kemayoran, Indonesia",
@@ -955,7 +955,7 @@
         "url": "https://aqicn.org/city/indonesia/kemayoran"
       },
       "pollutants": {
-        "pm25": 33,
+        "pm25": 32,
         "pm10": null,
         "o3": null,
         "no2": null,
@@ -963,10 +963,10 @@
         "co": null
       },
       "weather": {
-        "temperature": 24,
+        "temperature": 25,
         "pressure": 1012,
-        "humidity": 100,
-        "wind": 2
+        "humidity": 94,
+        "wind": 1.5
       },
       "attribution": [
         {
@@ -981,12 +981,12 @@
     },
     {
       "city": "hanoi",
-      "aqi": 131,
+      "aqi": 115,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 08:00:00",
+        "s": "2026-03-08 10:00:00",
         "tz": "+07:00",
-        "v": 1772956800
+        "v": 1772964000
       },
       "location": {
         "name": "United Nations International School of Hanoi, Vietnam (Trường Quốc tế Liên Hợp Quốc Hà Nội)",
@@ -997,7 +997,7 @@
         "url": "https://aqicn.org/city/vietnam/hanoi/unis"
       },
       "pollutants": {
-        "pm25": 131,
+        "pm25": 115,
         "pm10": null,
         "o3": null,
         "no2": null,
@@ -1005,10 +1005,10 @@
         "co": null
       },
       "weather": {
-        "temperature": 21,
-        "pressure": 1018.5,
-        "humidity": 96,
-        "wind": 2.5
+        "temperature": 23,
+        "pressure": 1018,
+        "humidity": 90,
+        "wind": 4.1
       },
       "attribution": [
         {
@@ -1026,9 +1026,9 @@
       "aqi": "-",
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 09:00:00",
+        "s": "2026-03-08 11:00:00",
         "tz": "+08:00",
-        "v": 1772960400
+        "v": 1772967600
       },
       "location": {
         "name": "Kuala Lumpur",
@@ -1047,10 +1047,10 @@
         "co": null
       },
       "weather": {
-        "temperature": 28,
+        "temperature": 31,
         "pressure": 1011,
-        "humidity": 78,
-        "wind": 1
+        "humidity": 52,
+        "wind": 1.5
       },
       "attribution": [
         {
@@ -1065,12 +1065,12 @@
     },
     {
       "city": "london",
-      "aqi": 97,
+      "aqi": 57,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 01:00:00",
+        "s": "2026-03-08 03:00:00",
         "tz": "+00:00",
-        "v": 1772931600
+        "v": 1772938800
       },
       "location": {
         "name": "London",
@@ -1081,18 +1081,18 @@
         "url": "https://aqicn.org/city/london"
       },
       "pollutants": {
-        "pm25": 97,
-        "pm10": 26,
-        "o3": 21.9,
-        "no2": 13.5,
-        "so2": 0.9,
-        "co": 2.3
+        "pm25": 57,
+        "pm10": 20,
+        "o3": 20.8,
+        "no2": 7.7,
+        "so2": 1.4,
+        "co": 2.8
       },
       "weather": {
         "temperature": 7.7,
-        "pressure": 1026.2,
+        "pressure": 1025.2,
         "humidity": 94,
-        "wind": 3.8
+        "wind": 5.4
       },
       "attribution": [
         {
@@ -1111,12 +1111,12 @@
     },
     {
       "city": "paris",
-      "aqi": 178,
-      "dominentpol": "pm25",
+      "aqi": 55,
+      "dominentpol": "pm10",
       "time": {
-        "s": "2026-03-08 00:00:00",
+        "s": "2026-03-08 02:00:00",
         "tz": "+01:00",
-        "v": 1772928000
+        "v": 1772935200
       },
       "location": {
         "name": "Paris",
@@ -1127,18 +1127,18 @@
         "url": "https://aqicn.org/city/paris"
       },
       "pollutants": {
-        "pm25": 178,
+        "pm25": 155,
         "pm10": 55,
-        "o3": 1,
+        "o3": 0.1,
         "no2": 21.8,
         "so2": 0.6,
         "co": 0.1
       },
       "weather": {
-        "temperature": 9.7,
-        "pressure": 1024.1,
-        "humidity": 92,
-        "wind": 0.4
+        "temperature": 8.3,
+        "pressure": 1024,
+        "humidity": 96.8,
+        "wind": 1
       },
       "attribution": [
         {
@@ -1157,12 +1157,12 @@
     },
     {
       "city": "berlin",
-      "aqi": 107,
+      "aqi": 102,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 03:00:00",
+        "s": "2026-03-08 04:00:00",
         "tz": "+01:00",
-        "v": 1772938800
+        "v": 1772942400
       },
       "location": {
         "name": "Berlin, Germany",
@@ -1173,18 +1173,18 @@
         "url": "https://aqicn.org/city/germany/berlin"
       },
       "pollutants": {
-        "pm25": 107,
-        "pm10": 42,
-        "o3": 21.2,
-        "no2": 9.2,
+        "pm25": 102,
+        "pm10": 40,
+        "o3": 20.8,
+        "no2": 8.7,
         "so2": null,
         "co": 0.1
       },
       "weather": {
-        "temperature": 7.7,
+        "temperature": 7.4,
         "pressure": 1027.2,
-        "humidity": 71,
-        "wind": 4.3
+        "humidity": 71.6,
+        "wind": 5.6
       },
       "attribution": [
         {
@@ -1299,12 +1299,12 @@
     },
     {
       "city": "amsterdam",
-      "aqi": 79,
+      "aqi": 70,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 02:00:00",
+        "s": "2026-03-08 04:00:00",
         "tz": "+01:00",
-        "v": 1772935200
+        "v": 1772942400
       },
       "location": {
         "name": "Amsterdam",
@@ -1315,18 +1315,18 @@
         "url": "https://aqicn.org/city/amsterdam"
       },
       "pollutants": {
-        "pm25": 79,
-        "pm10": 27,
-        "o3": 18.8,
-        "no2": 3.7,
+        "pm25": 70,
+        "pm10": 22,
+        "o3": 16.9,
+        "no2": 2.5,
         "so2": 0.9,
         "co": 3.4
       },
       "weather": {
         "temperature": 6.6,
-        "pressure": 1026.5,
-        "humidity": 97,
-        "wind": 1.6
+        "pressure": 1026,
+        "humidity": 97.6,
+        "wind": 1.3
       },
       "attribution": [
         {
@@ -1341,12 +1341,12 @@
     },
     {
       "city": "brussels",
-      "aqi": 95,
+      "aqi": 97,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 02:00:00",
+        "s": "2026-03-08 04:00:00",
         "tz": "+01:00",
-        "v": 1772935200
+        "v": 1772942400
       },
       "location": {
         "name": "Brussels",
@@ -1357,10 +1357,10 @@
         "url": "https://aqicn.org/city/brussels"
       },
       "pollutants": {
-        "pm25": 95,
-        "pm10": 38,
-        "o3": 1.3,
-        "no2": 11.9,
+        "pm25": 97,
+        "pm10": 35,
+        "o3": 3.7,
+        "no2": 8.3,
         "so2": null,
         "co": null
       },
@@ -1383,12 +1383,12 @@
     },
     {
       "city": "vienna",
-      "aqi": 63,
+      "aqi": 61,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 02:00:00",
+        "s": "2026-03-08 04:00:00",
         "tz": "+01:00",
-        "v": 1772935200
+        "v": 1772942400
       },
       "location": {
         "name": "Ecke Taborstraße - Glockengasse, Austria",
@@ -1399,17 +1399,17 @@
         "url": "https://aqicn.org/city/austria/ecke-taborstrasse-glockengasse"
       },
       "pollutants": {
-        "pm25": 63,
-        "pm10": 24,
+        "pm25": 61,
+        "pm10": 22,
         "o3": null,
-        "no2": 18.8,
+        "no2": 15.6,
         "so2": null,
         "co": 0.1
       },
       "weather": {
-        "temperature": 7.2,
-        "pressure": 1004.8,
-        "humidity": 54.8,
+        "temperature": 6.8,
+        "pressure": 1004.9,
+        "humidity": 54.7,
         "wind": 1
       },
       "attribution": [
@@ -1425,12 +1425,12 @@
     },
     {
       "city": "warsaw",
-      "aqi": 151,
+      "aqi": 159,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 03:00:00",
+        "s": "2026-03-08 04:00:00",
         "tz": "+01:00",
-        "v": 1772938800
+        "v": 1772942400
       },
       "location": {
         "name": "Marszałkowska, Warszawa, Mazowieckie, Poland",
@@ -1441,27 +1441,27 @@
         "url": "https://aqicn.org/city/poland/mazowieckie/warszawa/marszalkowska"
       },
       "pollutants": {
-        "pm25": 151,
-        "pm10": 67,
+        "pm25": 159,
+        "pm10": 78,
         "o3": 12,
-        "no2": 33.8,
+        "no2": 32.7,
         "so2": 2,
         "co": 0.1
       },
       "weather": {
-        "temperature": 1,
+        "temperature": 2,
         "pressure": 1030,
-        "humidity": 69,
-        "wind": 1.2
+        "humidity": 64,
+        "wind": 1.5
       },
       "attribution": [
         {
-          "name": "Regional Inspectorate for Environmental Protection in Warsaw (Wojewódzki Inspektorat Ochrony Środowiska w Warszawie)",
-          "url": "http://wios.warszawa.pl/"
-        },
-        {
           "name": "Główny inspektorat ochrony środowiska",
           "url": "http://powietrze.gios.gov.pl/"
+        },
+        {
+          "name": "Regional Inspectorate for Environmental Protection in Warsaw (Wojewódzki Inspektorat Ochrony Środowiska w Warszawie)",
+          "url": "http://wios.warszawa.pl/"
         },
         {
           "name": "World Air Quality Index Project",
@@ -1471,12 +1471,12 @@
     },
     {
       "city": "prague",
-      "aqi": 119,
+      "aqi": 109,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 02:00:00",
+        "s": "2026-03-08 04:00:00",
         "tz": "+01:00",
-        "v": 1772935200
+        "v": 1772942400
       },
       "location": {
         "name": "Pha8-Karlin, Prague, Czech Republic",
@@ -1487,18 +1487,18 @@
         "url": "https://aqicn.org/city/czechrepublic/prague/pha8-karlin"
       },
       "pollutants": {
-        "pm25": 119,
-        "pm10": 38,
+        "pm25": 109,
+        "pm10": 33,
         "o3": 0.5,
-        "no2": 21.4,
+        "no2": 19.9,
         "so2": 0.7,
         "co": null
       },
       "weather": {
-        "temperature": 7,
-        "pressure": 1026.8,
-        "humidity": 68.6,
-        "wind": 2.5
+        "temperature": 5,
+        "pressure": 1026.5,
+        "humidity": 75.7,
+        "wind": 2.2
       },
       "attribution": [
         {
@@ -1513,12 +1513,12 @@
     },
     {
       "city": "new-york",
-      "aqi": 58,
+      "aqi": 78,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-07 20:00:00",
+        "s": "2026-03-07 22:00:00",
         "tz": "-05:00",
-        "v": 1772913600
+        "v": 1772920800
       },
       "location": {
         "name": "New York",
@@ -1529,7 +1529,7 @@
         "url": "https://aqicn.org/city/newyork"
       },
       "pollutants": {
-        "pm25": 58,
+        "pm25": 78,
         "pm10": null,
         "o3": null,
         "no2": null,
@@ -1537,19 +1537,19 @@
         "co": null
       },
       "weather": {
-        "temperature": 7.7,
-        "pressure": 1014.7,
+        "temperature": 9.4,
+        "pressure": 1014.4,
         "humidity": 99,
-        "wind": 2
+        "wind": 2.3
       },
       "attribution": [
         {
-          "name": "Air Now - US EPA",
-          "url": "http://www.airnow.gov/"
-        },
-        {
           "name": "New York State Department of Environmental Conservation (NYSDEC)",
           "url": "http://www.dec.ny.gov/"
+        },
+        {
+          "name": "Air Now - US EPA",
+          "url": "http://www.airnow.gov/"
         },
         {
           "name": "World Air Quality Index Project",
@@ -1559,12 +1559,12 @@
     },
     {
       "city": "los-angeles",
-      "aqi": 34,
+      "aqi": 22,
       "dominentpol": "o3",
       "time": {
-        "s": "2026-03-07 18:00:00",
+        "s": "2026-03-07 19:00:00",
         "tz": "-08:00",
-        "v": 1772906400
+        "v": 1772910000
       },
       "location": {
         "name": "Los Angeles-North Main Street",
@@ -1575,24 +1575,20 @@
         "url": "https://aqicn.org/city/losangeles/los-angeles-north-main-street"
       },
       "pollutants": {
-        "pm25": 21,
-        "pm10": 7,
-        "o3": 34.4,
-        "no2": 2.6,
+        "pm25": 16,
+        "pm10": 16,
+        "o3": 21.6,
+        "no2": 13.2,
         "so2": 0.2,
-        "co": 1.2
+        "co": 3.4
       },
       "weather": {
-        "temperature": 20.4,
-        "pressure": 1036,
-        "humidity": 18.2,
+        "temperature": 19.7,
+        "pressure": 1036.7,
+        "humidity": 18.5,
         "wind": 0.4
       },
       "attribution": [
-        {
-          "name": "CARB - California Air Resources Board",
-          "url": "http://www.arb.ca.gov/"
-        },
         {
           "name": "South Coast Air Quality Management District (AQMD)",
           "url": "http://www.aqmd.gov/"
@@ -1602,6 +1598,10 @@
           "url": "http://www.airnow.gov/"
         },
         {
+          "name": "CARB - California Air Resources Board",
+          "url": "http://www.arb.ca.gov/"
+        },
+        {
           "name": "World Air Quality Index Project",
           "url": "https://waqi.info/"
         }
@@ -1609,12 +1609,12 @@
     },
     {
       "city": "chicago",
-      "aqi": 19,
+      "aqi": 21,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-07 20:00:00",
+        "s": "2026-03-07 21:00:00",
         "tz": "-06:00",
-        "v": 1772913600
+        "v": 1772917200
       },
       "location": {
         "name": "Chi_sp, Illinois, USA",
@@ -1625,7 +1625,7 @@
         "url": "https://aqicn.org/city/usa/illinois/chi_sp"
       },
       "pollutants": {
-        "pm25": 19,
+        "pm25": 21,
         "pm10": null,
         "o3": null,
         "no2": null,
@@ -1640,12 +1640,12 @@
       },
       "attribution": [
         {
-          "name": "Illinois Environmental Protection Agency",
-          "url": "http://www.epa.illinois.gov/"
-        },
-        {
           "name": "Air Now - US EPA",
           "url": "http://www.airnow.gov/"
+        },
+        {
+          "name": "Illinois Environmental Protection Agency",
+          "url": "http://www.epa.illinois.gov/"
         },
         {
           "name": "World Air Quality Index Project",
@@ -1655,12 +1655,12 @@
     },
     {
       "city": "houston",
-      "aqi": 16,
+      "aqi": 14,
       "dominentpol": "o3",
       "time": {
-        "s": "2026-03-07 20:00:00",
+        "s": "2026-03-07 22:00:00",
         "tz": "-06:00",
-        "v": 1772913600
+        "v": 1772920800
       },
       "location": {
         "name": "Park Place, Houston, Texas",
@@ -1673,16 +1673,16 @@
       "pollutants": {
         "pm25": null,
         "pm10": null,
-        "o3": 16,
-        "no2": 0.1,
+        "o3": 13.6,
+        "no2": 1.5,
         "so2": null,
         "co": null
       },
       "weather": {
-        "temperature": 28.0556,
-        "pressure": 1012.8,
-        "humidity": 67.5,
-        "wind": 7.4
+        "temperature": 24.5,
+        "pressure": 1014.4,
+        "humidity": 74.1,
+        "wind": 3.6
       },
       "attribution": [
         {
@@ -1701,12 +1701,12 @@
     },
     {
       "city": "toronto",
-      "aqi": 25,
-      "dominentpol": "pm25",
+      "aqi": 26,
+      "dominentpol": "o3",
       "time": {
-        "s": "2026-03-07 21:00:00",
+        "s": "2026-03-07 22:00:00",
         "tz": "-05:00",
-        "v": 1772917200
+        "v": 1772920800
       },
       "location": {
         "name": "Toronto",
@@ -1719,16 +1719,16 @@
       "pollutants": {
         "pm25": 25,
         "pm10": null,
-        "o3": 21.6,
-        "no2": 12.3,
-        "so2": 0.2,
-        "co": 1.9
+        "o3": 26.4,
+        "no2": 8.2,
+        "so2": 0.3,
+        "co": 2.3
       },
       "weather": {
-        "temperature": 12,
+        "temperature": 12.8,
         "pressure": 1001.4,
         "humidity": 93,
-        "wind": 7.9
+        "wind": 7.7
       },
       "attribution": [
         {
@@ -1743,12 +1743,12 @@
     },
     {
       "city": "vancouver",
-      "aqi": 15,
+      "aqi": 19,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-07 17:00:00",
+        "s": "2026-03-07 19:00:00",
         "tz": "-08:00",
-        "v": 1772902800
+        "v": 1772910000
       },
       "location": {
         "name": "Vancouver Clark Drive, British Comlumbia, Canada",
@@ -1759,16 +1759,16 @@
         "url": "https://aqicn.org/city/british-comlumbia/vancouver-clark-drive"
       },
       "pollutants": {
-        "pm25": 15,
+        "pm25": 19,
         "pm10": null,
-        "o3": 7.3,
-        "no2": 4.9,
+        "o3": 5.6,
+        "no2": 5.9,
         "so2": null,
         "co": 0.1
       },
       "weather": {
         "temperature": 10.5,
-        "pressure": 1018.5,
+        "pressure": 1017.6,
         "humidity": 96,
         "wind": 0.3
       },
@@ -1785,12 +1785,12 @@
     },
     {
       "city": "mexico-city",
-      "aqi": 72,
+      "aqi": 70,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-07 19:00:00",
+        "s": "2026-03-07 21:00:00",
         "tz": "-06:00",
-        "v": 1772910000
+        "v": 1772917200
       },
       "location": {
         "name": "Merced, México, Mexico",
@@ -1801,18 +1801,18 @@
         "url": "https://aqicn.org/city/mexico/mexico/merced"
       },
       "pollutants": {
-        "pm25": 72,
-        "pm10": 43,
-        "o3": 57.1,
-        "no2": 14.9,
+        "pm25": 70,
+        "pm10": 36,
+        "o3": 38.4,
+        "no2": 23.2,
         "so2": 4.3,
-        "co": 6.7
+        "co": 8.9
       },
       "weather": {
-        "temperature": 22,
-        "pressure": 1020.9,
-        "humidity": 28,
-        "wind": 4.2
+        "temperature": 20,
+        "pressure": 1022.6,
+        "humidity": 32,
+        "wind": 6.1
       },
       "attribution": [
         {
@@ -1831,12 +1831,12 @@
     },
     {
       "city": "sao-paulo",
-      "aqi": 21,
+      "aqi": 25,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-07 22:00:00",
+        "s": "2026-03-08 00:00:00",
         "tz": "-03:00",
-        "v": 1772920800
+        "v": 1772928000
       },
       "location": {
         "name": "Parque D.Pedro II, São Paulo, Brazil",
@@ -1847,18 +1847,18 @@
         "url": "https://aqicn.org/city/brazil/sao-paulo/parque-d.pedro-ii"
       },
       "pollutants": {
-        "pm25": 21,
-        "pm10": 4,
-        "o3": 7,
-        "no2": 16.5,
+        "pm25": 25,
+        "pm10": 8,
+        "o3": 5.3,
+        "no2": 17.4,
         "so2": null,
-        "co": 3.7
+        "co": 4.6
       },
       "weather": {
         "temperature": 20,
-        "pressure": 1021.1,
-        "humidity": 97,
-        "wind": 0.5
+        "pressure": 1020.6,
+        "humidity": 96.4,
+        "wind": 0.4
       },
       "attribution": [
         {
@@ -1955,12 +1955,12 @@
     },
     {
       "city": "santiago",
-      "aqi": 42,
-      "dominentpol": "pm25",
+      "aqi": 33,
+      "dominentpol": "pm10",
       "time": {
-        "s": "2026-03-07 21:00:00",
+        "s": "2026-03-07 23:00:00",
         "tz": "-03:00",
-        "v": 1772917200
+        "v": 1772924400
       },
       "location": {
         "name": "Parque O'Higgins, Chile",
@@ -1971,18 +1971,18 @@
         "url": "https://aqicn.org/city/chile/parque-ohiggins"
       },
       "pollutants": {
-        "pm25": 42,
-        "pm10": 31,
-        "o3": 19.2,
-        "no2": 20.3,
+        "pm25": 30,
+        "pm10": 33,
+        "o3": 21.6,
+        "no2": 12.2,
         "so2": null,
         "co": 0.8
       },
       "weather": {
-        "temperature": 17,
+        "temperature": 16,
         "pressure": 1013,
-        "humidity": 72,
-        "wind": 4.6
+        "humidity": 77,
+        "wind": 3.6
       },
       "attribution": [
         {
@@ -1997,12 +1997,12 @@
     },
     {
       "city": "sydney",
-      "aqi": 18,
+      "aqi": 24,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 11:00:00",
+        "s": "2026-03-08 13:00:00",
         "tz": "+11:00",
-        "v": 1772967600
+        "v": 1772974800
       },
       "location": {
         "name": "Cook And Phillip Sydney East",
@@ -2013,18 +2013,18 @@
         "url": "https://aqicn.org/city/australia/nsw/cook-and-phillip/sydney-east"
       },
       "pollutants": {
-        "pm25": 18,
-        "pm10": 13,
-        "o3": 15.1,
-        "no2": 3.6,
+        "pm25": 24,
+        "pm10": 17,
+        "o3": 15.3,
+        "no2": 2.6,
         "so2": null,
         "co": 1.2
       },
       "weather": {
-        "temperature": 22.7,
-        "pressure": 1013.5,
-        "humidity": 78,
-        "wind": 2.3
+        "temperature": 22.8,
+        "pressure": 1013,
+        "humidity": 78.6,
+        "wind": 3
       },
       "attribution": [
         {
@@ -2039,12 +2039,12 @@
     },
     {
       "city": "melbourne",
-      "aqi": 38,
+      "aqi": 40,
       "dominentpol": "pm25",
       "time": {
-        "s": "2026-03-08 13:00:00",
+        "s": "2026-03-08 14:00:00",
         "tz": "+11:00",
-        "v": 1772974800
+        "v": 1772978400
       },
       "location": {
         "name": "Melbourne CBD",
@@ -2055,7 +2055,7 @@
         "url": "https://aqicn.org/city/australia/melbourne/melbourne-cbd"
       },
       "pollutants": {
-        "pm25": 38,
+        "pm25": 40,
         "pm10": 11,
         "o3": 8,
         "no2": 3.8,
@@ -2063,10 +2063,10 @@
         "co": 1.5
       },
       "weather": {
-        "temperature": 21.5,
-        "pressure": 1015.6,
-        "humidity": 61.1,
-        "wind": 4.1
+        "temperature": 23.3,
+        "pressure": 1013.7,
+        "humidity": 55.9,
+        "wind": 3
       },
       "attribution": [
         {
@@ -2084,9 +2084,9 @@
       "aqi": 1,
       "dominentpol": "so2",
       "time": {
-        "s": "2026-03-08 16:00:00",
+        "s": "2026-03-08 18:00:00",
         "tz": "+13:00",
-        "v": 1772985600
+        "v": 1772992800
       },
       "location": {
         "name": "Penrose, Auckland",
@@ -2100,21 +2100,17 @@
         "pm25": null,
         "pm10": null,
         "o3": null,
-        "no2": 2.7,
+        "no2": 1.4,
         "so2": 0.6,
         "co": null
       },
       "weather": {
-        "temperature": 22.2,
-        "pressure": 1015.2,
-        "humidity": 51.3,
-        "wind": 1.7
+        "temperature": 22.6,
+        "pressure": 1014.3,
+        "humidity": 50.4,
+        "wind": 3.2
       },
       "attribution": [
-        {
-          "name": "World Meteorological Organization - surface synoptic observations (WMO-SYNOP)",
-          "url": "http://worldweather.wmo.int"
-        },
         {
           "name": "Auckland Council - Kaunihera Taiao ki Waitaha",
           "url": "http://www.aucklandcouncil.govt.nz/"
@@ -2126,6 +2122,10 @@
         {
           "name": "LAWA - Land, Air, Water Aotearoa",
           "url": "http://www.lawa.org.nz/"
+        },
+        {
+          "name": "World Meteorological Organization - surface synoptic observations (WMO-SYNOP)",
+          "url": "http://worldweather.wmo.int"
         },
         {
           "name": "World Air Quality Index Project",
