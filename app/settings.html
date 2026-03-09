@@ -228,59 +228,6 @@
       </div>
     </div>
 
-    <!-- ③ Model Info ── -->
-    <div class="settings-card rounded-2xl border border-gray-200 dark:border-white/10
-                bg-white dark:bg-black/20 p-6 shadow-sm">
-      <div class="mb-5">
-        <h2 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary" style="font-size:1.1rem;">psychology</span>
-          AI Model Info
-        </h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Details about the models powering AirLens</p>
-      </div>
-      <div class="flex flex-col gap-3">
-        <div class="model-info-item rounded-xl border border-gray-100 dark:border-white/8 p-4">
-          <h3 class="font-bold text-gray-800 dark:text-gray-200 text-sm mb-2">📷 Camera AI Model</h3>
-          <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-            <p><strong class="text-gray-700 dark:text-gray-300">Purpose:</strong> Estimate air quality from sky photos — useful where no sensor exists nearby</p>
-            <p><strong class="text-gray-700 dark:text-gray-300">How:</strong> Deep learning classifies haze, visibility and color patterns in the sky</p>
-            <p><strong class="text-gray-700 dark:text-gray-300">Output:</strong> 4-class AQ grade (Good / Moderate / Unhealthy / Very Unhealthy)</p>
-            <p><strong class="text-gray-700 dark:text-gray-300">Runs in:</strong> Browser (ONNX) — your photo never leaves your device</p>
-            <p><strong class="text-gray-700 dark:text-gray-300">Status:</strong>
-              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-[10px] font-bold">
-                EXPERIMENTAL
-              </span>
-            </p>
-          </div>
-        </div>
-        <div class="model-info-item rounded-xl border border-gray-100 dark:border-white/8 p-4">
-          <h3 class="font-bold text-gray-800 dark:text-gray-200 text-sm mb-2">🛰️ AOD → PM2.5 Estimation</h3>
-          <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-            <p><strong class="text-gray-700 dark:text-gray-300">Purpose:</strong> Estimate ground-level PM2.5 in areas without air quality sensors, using satellite data</p>
-            <p><strong class="text-gray-700 dark:text-gray-300">Why:</strong> Over 90% of the world lacks ground-based PM2.5 monitoring — satellites fill this gap</p>
-            <p><strong class="text-gray-700 dark:text-gray-300">Inputs:</strong> Satellite AOD, Temperature, Humidity, Wind Speed, Elevation, Season</p>
-            <p><strong class="text-gray-700 dark:text-gray-300">Output:</strong> Predicted PM2.5 (µg/m³) with uncertainty range</p>
-            <p><strong class="text-gray-700 dark:text-gray-300">Target:</strong>
-              R² ≥ <span id="model-target-r2">--</span>,
-              RMSE ≤ <span id="model-target-rmse">--</span> µg/m³
-            </p>
-          </div>
-        </div>
-        <div class="model-info-item rounded-xl border border-gray-100 dark:border-white/8 p-4">
-          <h3 class="font-bold text-gray-800 dark:text-gray-200 text-sm mb-2">🌍 Data Sources</h3>
-          <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1" id="data-sources-list">
-            <!-- JS가 config.js DATA_SOURCES 기반으로 채움 -->
-          </div>
-        </div>
-        <div class="model-info-item rounded-xl border border-gray-100 dark:border-white/8 p-4">
-          <h3 class="font-bold text-gray-800 dark:text-gray-200 text-sm mb-2">📊 PM2.5 Grading (US EPA)</h3>
-          <div class="text-xs space-y-1" id="grade-legend">
-            <!-- JS가 config.js PM25_GRADES 기반으로 채움 -->
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- ⑤ About ── -->
     <div class="settings-card rounded-2xl border border-gray-200 dark:border-white/10
                 bg-white dark:bg-black/20 p-6 shadow-sm">
@@ -300,11 +247,6 @@
         <p><strong class="text-gray-700 dark:text-gray-300">GitHub:</strong>
           <a href="https://github.com/joymin5655/AirLens" target="_blank"
              class="text-primary hover:underline">joymin5655/AirLens</a>
-        </p>
-        <p class="pt-2 leading-relaxed">
-          AirLens is an open-source project making air quality data accessible to everyone.
-          Built with modern web technologies and powered by AI, we aim to raise awareness
-          about air pollution and contribute to a cleaner, healthier planet.
         </p>
       </div>
     </div>
