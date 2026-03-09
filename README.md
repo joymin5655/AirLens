@@ -2,8 +2,8 @@
 
 **Real-time PM2.5 visualization on a 3D globe · Policy impact analysis across 66 countries · Satellite-based air quality estimation**
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Try_AirLens-2ea44f?style=for-the-badge)](https://joymin5655.github.io/AirLens/)
-> 🔗 **[Try AirLens Live →](https://joymin5655.github.io/AirLens/)**
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Try_AirLens-2ea44f?style=for-the-badge)](https://joymin5655.github.io/AirLens/) > 🔗 **[Try AirLens Live →](https://joymin5655.github.io/AirLens/)**
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Data Pipeline](https://img.shields.io/badge/Data-Auto--updated-orange)](https://github.com/joymin5655/AirLens/actions)
 
