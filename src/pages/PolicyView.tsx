@@ -51,7 +51,7 @@ const PolicyView = () => {
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 bg-sage px-3 py-1 rounded-full border border-soft-green/20">
             <Activity className="text-forest" size={14} />
-            <span className="text-[10px] font-bold text-forest uppercase tracking-widest font-sans">Policy Intelligence v3.0</span>
+            <span className="text-[10px] font-bold text-forest uppercase tracking-widest font-sans">Policy Intelligence v1.0</span>
           </div>
           <h1 className="text-5xl font-semibold text-earth-brown tracking-tight leading-tight">Impact <span className="text-forest italic">Lab</span></h1>
           <p className="text-clay text-sm font-sans max-w-2xl leading-relaxed font-light">Synthetic DID 모델을 사용하여 전 세계 68개국 환경 정책의 인과적 효과를 측정합니다. 외부 기상 요인과 정책 실행 요인을 분리하여 순수 개선도를 산출합니다.</p>

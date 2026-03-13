@@ -7,7 +7,7 @@ const About = () => {
       <section className="text-center flex flex-col gap-6">
         <div className="inline-flex items-center gap-2 bg-sage px-4 py-2 rounded-full border border-soft-green/20 self-center">
           <BookOpen className="text-forest w-4 h-4" />
-          <span className="text-[10px] font-bold text-forest uppercase tracking-widest font-sans">v3.0 Scientific Integrity</span>
+          <span className="text-[10px] font-bold text-forest uppercase tracking-widest font-sans">v1.0 Scientific Integrity</span>
         </div>
         <h1 className="text-5xl md:text-6xl font-semibold text-earth-brown tracking-tight leading-tight">Physics-Informed, <br/><span className="text-forest italic">Human-Centered.</span></h1>
         <p className="text-clay text-lg max-w-3xl mx-auto leading-relaxed font-serif italic">"데이터는 보여주는 것이 아니라, 증명하는 것입니다."</p>

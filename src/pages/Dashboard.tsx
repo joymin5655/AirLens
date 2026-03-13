@@ -8,7 +8,7 @@ const Dashboard = () => {
       <section className="min-w-[100vw] h-full flex items-center justify-center snap-center px-8 md:px-20 bg-warm-cream">
         <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
-            <span className="font-sans font-bold text-forest uppercase tracking-[0.2em] text-xs">v3.0 Intelligence</span>
+            <span className="font-sans font-bold text-forest uppercase tracking-[0.2em] text-xs">v1.0 Intelligence</span>
             <h1 className="text-5xl md:text-7xl font-semibold leading-tight text-earth-brown">
               Beyond Numbers, <br />
               <span className="text-forest italic">Towards Truth.</span>

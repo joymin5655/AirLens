@@ -38,7 +38,7 @@ const CameraAI = () => {
     <main className="flex flex-1 p-6 gap-6 flex-col lg:flex-row max-w-[1600px] mx-auto w-full mt-20">
       <aside className="flex w-full lg:w-72 flex-col gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-earth-brown/5">
-          <p className="text-[10px] font-bold text-clay uppercase tracking-widest mb-4 font-sans">Visionary Sensing v3.0</p>
+          <p className="text-[10px] font-bold text-clay uppercase tracking-widest mb-4 font-sans">Visionary Sensing v1.0</p>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-forest text-warm-cream shadow-md shadow-forest/20">
               <Eye size={18} /> <p className="text-sm font-bold font-sans">Live Analysis</p>

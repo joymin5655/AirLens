@@ -26,7 +26,7 @@ const GlobeView = () => {
         <div className="bg-white/10 backdrop-blur-xl border border-white/10 p-6 rounded-[32px] shadow-2xl">
           <div className="flex items-center gap-2 mb-2">
             <GlobeIcon className="text-forest w-5 h-5" />
-            <span className="font-sans font-bold text-soft-green uppercase tracking-[0.2em] text-[10px]">Global Flux v3.0</span>
+            <span className="font-sans font-bold text-soft-green uppercase tracking-[0.2em] text-[10px]">Global Flux v1.0</span>
           </div>
           <h1 className="text-2xl font-semibold text-white tracking-tight leading-tight">Atmospheric <br/><span className="italic text-soft-green">Intelligence</span></h1>
           
