@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, Award } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthStore } from '../logic/useAuthStore';
 import { supabase } from '../logic/supabase';
@@ -46,15 +46,18 @@ const Navbar = () => {
 
       <div className="flex items-center gap-4">
         {user ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 animate-in fade-in duration-500">
             <div className="flex flex-col items-end">
-              <span className="text-xs font-sans font-bold text-clay hidden lg:inline uppercase tracking-widest">
-                {user.email?.split('@')[0]}
+              <span className="text-[10px] font-sans font-bold text-clay uppercase tracking-widest leading-none mb-1">
+                {user.user_metadata?.full_name || user.email?.split('@')[0]}
               </span>
               {isAdmin && (
-                <span className="text-[8px] font-black bg-earth-brown text-warm-cream px-1.5 py-0.5 rounded-sm uppercase tracking-tighter">
-                  System Admin
-                </span>
+                <div className="flex items-center gap-1 bg-earth-brown px-1.5 py-0.5 rounded-sm">
+                  <Award size={8} className="text-warm-cream" />
+                  <span className="text-[7px] font-black text-warm-cream uppercase tracking-tighter">
+                    Admin
+                  </span>
+                </div>
               )}
             </div>
             <button 
@@ -62,7 +65,7 @@ const Navbar = () => {
               className="bg-earth-brown text-warm-cream px-5 py-2 rounded-full font-sans font-bold text-xs shadow-lg hover:bg-earth-brown/90 transition-all flex items-center gap-2"
             >
               <LogOut size={14} />
-              Sign Out
+              <span className="hidden sm:inline">Sign Out</span>
             </button>
           </div>
         ) : (
@@ -96,7 +99,7 @@ const Navbar = () => {
             {user && (
               <button 
                 onClick={() => { handleSignOut(); setIsOpen(false); }}
-                className="text-left text-red-500"
+                className="text-left text-red-500 font-bold uppercase tracking-widest text-xs"
               >
                 Sign Out
               </button>
