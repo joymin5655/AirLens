@@ -37,10 +37,18 @@ const Auth = () => {
 
   const handleSocialLogin = async (provider: 'google' | 'github') => {
     try {
+      // Get the absolute URL including the base path (e.g., /AirLens/)
+      const getURL = () => {
+        let url = window.location.origin + import.meta.env.BASE_URL;
+        // Make sure to remove trailing slash if any and ensure it ends with /
+        url = url.replace(/\/$/, "") + "/";
+        return url;
+      };
+
       const { error } = await supabase.auth.signInWithOAuth({ 
         provider,
         options: {
-          redirectTo: window.location.origin
+          redirectTo: getURL()
         }
       });
       if (error) throw error;
