@@ -7,7 +7,7 @@ import { supabase } from '../logic/supabase';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { user } = useAuthStore();
+  const { user, isAdmin } = useAuthStore();
 
   const links = [
     { name: 'Our Story', path: '/' },
@@ -47,9 +47,16 @@ const Navbar = () => {
       <div className="flex items-center gap-4">
         {user ? (
           <div className="flex items-center gap-4">
-            <span className="text-xs font-sans font-bold text-clay hidden lg:inline uppercase tracking-widest">
-              {user.email?.split('@')[0]}
-            </span>
+            <div className="flex flex-col items-end">
+              <span className="text-xs font-sans font-bold text-clay hidden lg:inline uppercase tracking-widest">
+                {user.email?.split('@')[0]}
+              </span>
+              {isAdmin && (
+                <span className="text-[8px] font-black bg-earth-brown text-warm-cream px-1.5 py-0.5 rounded-sm uppercase tracking-tighter">
+                  System Admin
+                </span>
+              )}
+            </div>
             <button 
               onClick={handleSignOut}
               className="bg-earth-brown text-warm-cream px-5 py-2 rounded-full font-sans font-bold text-xs shadow-lg hover:bg-earth-brown/90 transition-all flex items-center gap-2"
