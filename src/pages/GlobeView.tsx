@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
 import Globe from '../components/Globe';
 import AirQualityMarkers from '../components/AirQualityMarkers';
 import { Globe as GlobeIcon, Info, Layers, ShieldCheck, ChevronLeft } from 'lucide-react';
@@ -7,10 +7,8 @@ import { Link } from 'react-router-dom';
 import { fetchAodSamples } from '../logic/airQualityService';
 
 const GlobeView = () => {
-  const [aodData, setAodData] = useState<any>(null);
-
   useEffect(() => {
-    fetchAodSamples().then(setAodData);
+    fetchAodSamples().then(data => console.log('AOD Samples loaded:', !!data));
   }, []);
 
   return (
