@@ -1,9 +1,57 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Wind, ShieldCheck, Activity, ArrowRight, Camera, Globe as GlobeIcon, History, Edit3, Heart, Award } from 'lucide-react';
+import { Wind, ShieldCheck, Activity, ArrowRight, Camera, Globe as GlobeIcon, Edit3, Heart, Award, LogOut, Save } from 'lucide-react';
 import { useAuthStore } from '../logic/useAuthStore';
+import { supabase } from '../logic/supabase';
 
 const Dashboard = () => {
   const { user, isAdmin } = useAuthStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [bio, setBio] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  // Load profile data
+  useEffect(() => {
+    if (user) {
+      setFullName(user.user_metadata?.full_name || '');
+      // Fetch bio from profiles table
+      const fetchBio = async () => {
+        const { data } = await supabase.from('profiles').select('bio').eq('id', user.id).single();
+        if (data?.bio) setBio(data.bio);
+      };
+      fetchBio();
+    }
+  }, [user]);
+
+  const handleUpdateProfile = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: fullName, bio: bio, updated_at: new Date().toISOString() })
+        .eq('id', user.id);
+      
+      if (error) throw error;
+      
+      // Update auth metadata as well
+      await supabase.auth.updateUser({
+        data: { full_name: fullName }
+      });
+
+      setIsEditing(false);
+      alert('Profile updated successfully!');
+    } catch (err: any) {
+      alert('Update failed: ' + err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <div className="h-screen overflow-x-auto overflow-y-hidden no-scrollbar snap-x snap-mandatory flex">
@@ -57,13 +105,12 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Profile & Stats Area */}
+          {/* Profile Area */}
           <div className="lg:col-span-5 relative hidden lg:block">
             <div className="absolute -inset-4 bg-soft-green/20 rounded-full blur-3xl"></div>
             
             {user ? (
               <div className="flex flex-col gap-4 relative z-10 animate-in fade-in slide-in-from-right-4 duration-700">
-                {/* Profile Card */}
                 <div className="narrative-card !p-0 overflow-hidden bg-white/90">
                   <div className="h-24 bg-forest relative">
                     <div className="absolute -bottom-10 left-8 p-1 bg-white rounded-3xl shadow-lg">
@@ -75,40 +122,62 @@ const Dashboard = () => {
                         )}
                       </div>
                     </div>
-                    {isAdmin && (
-                      <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black text-white uppercase tracking-widest border border-white/20">
-                        System Admin
-                      </div>
-                    )}
+                    <button 
+                      onClick={handleSignOut}
+                      className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-red-500/40 transition-all border border-white/20 group"
+                      title="Sign Out"
+                    >
+                      <LogOut size={16} className="group-hover:scale-110 transition-transform" />
+                    </button>
                   </div>
+                  
                   <div className="pt-14 pb-8 px-8 space-y-4">
-                    <div>
-                      <h3 className="text-2xl font-bold text-earth-brown font-sans">{user.user_metadata?.full_name || user.email?.split('@')[0]}</h3>
-                      <p className="text-xs text-clay font-bold uppercase tracking-widest">{isAdmin ? 'AirLens Intelligence Manager' : 'Citizen Scientist'}</p>
-                    </div>
-                    <p className="text-sm text-clay leading-relaxed font-serif italic bg-sage/20 p-4 rounded-2xl border border-soft-green/10">
-                      {isAdmin ? "AirLens 시스템의 무결성과 데이터 품질을 감독하며, 글로벌 환경 정책의 인과관계를 분석합니다." : "우리 동네의 공기질 데이터를 수집하고 AI 분석에 기여하는 시민 과학자입니다."}
-                    </p>
-                    <div className="flex gap-3 pt-2">
-                      <button className="flex-1 bg-forest/5 text-forest py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-forest/10 transition-all flex items-center justify-center gap-2">
-                        <Edit3 size={12} /> Edit Profile
-                      </button>
-                      <button className="w-12 bg-sage/30 text-forest rounded-xl flex items-center justify-center hover:bg-sage/50 transition-all">
-                        <Heart size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* mini stats */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="glass-panel p-6 flex flex-col gap-1">
-                    <p className="text-[9px] font-black text-clay uppercase">Contributions</p>
-                    <p className="text-2xl font-bold text-forest font-sans">128 pts</p>
-                  </div>
-                  <div className="glass-panel p-6 flex flex-col gap-1">
-                    <p className="text-[9px] font-black text-clay uppercase">Accuracy</p>
-                    <p className="text-2xl font-bold text-forest font-sans">94.2%</p>
+                    {isEditing ? (
+                      <div className="space-y-3 animate-in fade-in duration-300">
+                        <input 
+                          className="w-full bg-sage/30 border border-forest/20 rounded-xl px-4 py-2 text-sm font-bold text-earth-brown outline-none focus:ring-2 focus:ring-forest/30"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          placeholder="Your Name"
+                        />
+                        <textarea 
+                          className="w-full bg-sage/30 border border-forest/20 rounded-xl px-4 py-2 text-xs text-clay outline-none focus:ring-2 focus:ring-forest/30 h-20 resize-none"
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          placeholder="Tell us about your mission..."
+                        />
+                        <div className="flex gap-2">
+                          <button onClick={handleUpdateProfile} disabled={saving} className="flex-1 bg-forest text-warm-cream py-2 rounded-xl text-[10px] font-black uppercase flex items-center justify-center gap-2">
+                            {saving ? 'Saving...' : <><Save size={12}/> Save Changes</>}
+                          </button>
+                          <button onClick={() => setIsEditing(false)} className="px-4 bg-clay/10 text-clay py-2 rounded-xl text-[10px] font-black uppercase">Cancel</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-2xl font-bold text-earth-brown font-sans">{fullName || user.email?.split('@')[0]}</h3>
+                            {isAdmin && <span className="bg-earth-brown text-warm-cream text-[8px] px-1.5 py-0.5 rounded font-black uppercase">Admin</span>}
+                          </div>
+                          <p className="text-xs text-clay font-bold uppercase tracking-widest">{isAdmin ? 'AirLens Intelligence Manager' : 'Citizen Scientist'}</p>
+                        </div>
+                        <p className="text-sm text-clay leading-relaxed font-serif italic bg-sage/20 p-4 rounded-2xl border border-soft-green/10">
+                          {bio || (isAdmin ? "AirLens 시스템의 무결성을 감독하며, 글로벌 환경 데이터를 분석합니다." : "공기질 데이터를 수집하고 AI 분석에 기여하는 시민 과학자입니다.")}
+                        </p>
+                        <div className="flex gap-3 pt-2">
+                          <button 
+                            onClick={() => setIsEditing(true)}
+                            className="flex-1 bg-forest/5 text-forest py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-forest/10 transition-all flex items-center justify-center gap-2"
+                          >
+                            <Edit3 size={12} /> Edit Profile
+                          </button>
+                          <button className="w-12 bg-sage/30 text-forest rounded-xl flex items-center justify-center hover:bg-sage/50 transition-all">
+                            <Heart size={16} />
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
