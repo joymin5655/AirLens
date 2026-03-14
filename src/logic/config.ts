@@ -2,8 +2,6 @@
  * AirLens Global Configuration
  * Centralized source of truth for constants, thresholds, and theme values.
  */
-import { supabase } from './supabase';
-
 const getEnv = (key: string, fallback?: string): string => {
   const value = import.meta.env[key];
   if (!value && !fallback) {
@@ -70,6 +68,7 @@ export const APP_CONFIG = {
  */
 export const loadRemoteConfig = async () => {
   try {
+    const { supabase } = await import('./supabase');
     const { data, error } = await supabase
       .from('app_settings')
       .select('key, value');

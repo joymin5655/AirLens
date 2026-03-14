@@ -4,6 +4,7 @@ import { useEffect, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Dashboard from './pages/Dashboard';
+import ComingSoon from './pages/ComingSoon';
 import GlobeView from './pages/GlobeView';
 import PolicyView from './pages/PolicyView';
 import Analytics from './pages/Analytics';
@@ -30,6 +31,7 @@ const PageLoader = () => (
 function App() {
   const location = useLocation();
   const isGlobe = location.pathname === '/globe';
+  const isComingSoon = location.pathname === '/';
   
   const setUser = useAuthStore((state) => state.setUser);
   const setLoading = useAuthStore((state) => state.setLoading);
@@ -37,7 +39,9 @@ function App() {
 
   useEffect(() => {
     applyTheme(theme);
+  }, [theme]);
 
+  useEffect(() => {
     // 1. Initial session check
     const initAuth = async () => {
       try {
@@ -61,17 +65,18 @@ function App() {
     });
 
     return () => subscription.unsubscribe();
-  }, [setUser, setLoading, theme]);
+  }, [setUser, setLoading]);
 
   return (
     <Suspense fallback={<PageLoader />}>
       <div className="flex flex-col min-h-screen bg-bg-base transition-colors duration-500">
-        <Navbar />
-        <main className={`flex-1 ${isGlobe ? '' : 'pt-20'}`}>
+        {!isComingSoon && <Navbar />}
+        <main className={`flex-1 ${isGlobe ? '' : isComingSoon ? '' : 'pt-20'}`}>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               {/* Public routes */}
-              <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
+              <Route path="/" element={<PageTransition><ComingSoon /></PageTransition>} />
+              <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
               <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
               <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
               <Route path="/about" element={<PageTransition><About /></PageTransition>} />
@@ -85,7 +90,7 @@ function App() {
             </Routes>
           </AnimatePresence>
         </main>
-        {!isGlobe && <Footer />}
+        {!isGlobe && !isComingSoon && <Footer />}
       </div>
     </Suspense>
   );

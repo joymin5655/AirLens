@@ -51,7 +51,4 @@ models/*.bin
 # app/data/predicted_grid.json
 # app/data/data_quality.json
 .private_vault/
-.env
-node_modules/
 dist/
-.DS_Store

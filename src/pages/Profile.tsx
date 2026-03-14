@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../logic/useAuthStore';
 import { useThemeStore } from '../logic/useThemeStore';
 import { supabase } from '../logic/supabase';
+import { APP_CONFIG } from '../logic/config';
 
 const Profile = () => {
   const { user, isAdmin, isAnonymous, setUser, signOut } = useAuthStore();
