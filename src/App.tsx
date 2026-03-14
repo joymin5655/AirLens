@@ -11,7 +11,10 @@ import Pricing from './pages/Pricing';
 import CameraAI from './pages/CameraAI';
 import About from './pages/About';
 import Auth from './pages/Auth';
+import Profile from './pages/Profile';
+import NotFound from './pages/NotFound';
 import PageTransition from './components/PageTransition';
+import ProtectedRoute from './components/ProtectedRoute';
 import { supabase } from './logic/supabase';
 import { useAuthStore } from './logic/useAuthStore';
 import { useThemeStore, applyTheme } from './logic/useThemeStore';
@@ -30,22 +33,24 @@ function App() {
   
   const setUser = useAuthStore((state) => state.setUser);
   const setLoading = useAuthStore((state) => state.setLoading);
+  const signInAnonymously = useAuthStore((state) => state.signInAnonymously);
   const theme = useThemeStore((state) => state.theme);
 
   useEffect(() => {
     // 0. Initialize Theme
     applyTheme(theme);
 
-    // 1. Initial Session Check
+    // 1. Initial Session Check — no session → anonymous login
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        console.log('Initial Auth Check:', !!session);
-        setUser(session?.user ?? null);
+        if (session?.user) {
+          setUser(session.user);
+        } else {
+          await signInAnonymously();
+        }
       } catch (err) {
         console.error('Initial Auth Error:', err);
-        setUser(null);
-      } finally {
         setLoading(false);
       }
     };
@@ -53,13 +58,14 @@ function App() {
 
     // 2. Continuous State Listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Auth Event:', _event, 'User:', !!session?.user);
-      setUser(session?.user ?? null);
+      if (session?.user) {
+        setUser(session.user);
+      }
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [setUser, setLoading, theme]);
+  }, [setUser, setLoading, signInAnonymously, theme]);
 
   return (
     <Suspense fallback={<PageLoader />}>
@@ -68,7 +74,7 @@ function App() {
         <main className={`flex-1 ${isGlobe ? '' : 'pt-20'}`}>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
+              <Route path="/" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
               <Route path="/globe" element={<PageTransition><GlobeView /></PageTransition>} />
               <Route path="/policy" element={<PageTransition><PolicyView /></PageTransition>} />
               <Route path="/analytics" element={<PageTransition><Analytics /></PageTransition>} />
@@ -76,6 +82,8 @@ function App() {
               <Route path="/camera" element={<PageTransition><CameraAI /></PageTransition>} />
               <Route path="/about" element={<PageTransition><About /></PageTransition>} />
               <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+              <Route path="/profile" element={<ProtectedRoute><PageTransition><Profile /></PageTransition></ProtectedRoute>} />
+              <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
             </Routes>
           </AnimatePresence>
         </main>

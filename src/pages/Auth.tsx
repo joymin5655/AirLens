@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../logic/supabase';
 import { useAuthStore } from '../logic/useAuthStore';
-import { Mail, Lock, LogIn, UserPlus, Chrome, AlertCircle, CheckCircle2, ShieldCheck, Zap, Database } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Mail, Lock, LogIn, UserPlus, Chrome, AlertCircle, CheckCircle2, ShieldCheck, Zap, Database, Sparkles } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Auth = () => {
   const { t } = useTranslation();
@@ -14,15 +14,17 @@ const Auth = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { user, setUser } = useAuthStore();
+  const { user, isAnonymous, setUser } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
-  // Auto-redirect if already logged in
+  // Redirect only if already a full (non-anonymous) account
   useEffect(() => {
-    if (user) {
-      navigate('/');
+    if (user && !isAnonymous) {
+      navigate(from, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, isAnonymous, navigate, from]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,20 +38,23 @@ const Auth = () => {
         if (error) throw error;
         if (data.user) {
           setUser(data.user);
-          navigate('/');
+          navigate(from, { replace: true });
         }
       } else {
-        const { error } = await supabase.auth.signUp({ 
-          email, 
-          password,
-          options: {
-            data: {
-              full_name: email.split('@')[0],
-            }
-          }
-        });
-        if (error) throw error;
-        setSuccess(true);
+        // If anonymous user → link email to existing anonymous account
+        if (user?.is_anonymous) {
+          const { error } = await supabase.auth.updateUser({ email, password });
+          if (error) throw error;
+          setSuccess(true);
+        } else {
+          const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { full_name: email.split('@')[0] } }
+          });
+          if (error) throw error;
+          setSuccess(true);
+        }
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
@@ -60,19 +65,22 @@ const Auth = () => {
 
   const handleSocialLogin = async (provider: 'google' | 'github') => {
     try {
-      const getURL = () => {
-        let url = window.location.origin + import.meta.env.BASE_URL;
-        url = url.replace(/\/$/, "") + "/";
-        return url;
-      };
+      const redirectTo = window.location.origin + import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
 
-      const { error } = await supabase.auth.signInWithOAuth({ 
-        provider,
-        options: {
-          redirectTo: getURL()
-        }
-      });
-      if (error) throw error;
+      // Anonymous user → link OAuth identity to existing account
+      if (user?.is_anonymous) {
+        const { error } = await supabase.auth.linkIdentity({
+          provider,
+          options: { redirectTo }
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: { redirectTo }
+        });
+        if (error) throw error;
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
     }
@@ -80,6 +88,16 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-24 flex flex-col items-center px-4 bg-bg-base transition-colors duration-500">
+      {/* Anonymous upgrade banner */}
+      {user?.is_anonymous && (
+        <div className="mb-8 max-w-md w-full flex items-start gap-3 bg-primary/10 border border-primary/20 rounded-2xl px-5 py-4">
+          <Sparkles size={16} className="text-primary shrink-0 mt-0.5" />
+          <p className="text-[11px] font-bold text-text-main leading-relaxed">
+            현재 <span className="text-primary">임시 계정</span>으로 이용 중입니다. 이메일 또는 Google로 가입하면 데이터가 영구 보존됩니다.
+          </p>
+        </div>
+      )}
+
       <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         {/* Left Side: Value Proposition */}
@@ -156,7 +174,7 @@ const Auth = () => {
                 </div>
                 <button 
                   onClick={() => setIsLogin(true)}
-                  className="bg-text-main text-bg-base px-10 py-4 rounded-2xl text-label shadow-deep hover:scale-105 transition-all"
+                  className="btn-main px-10"
                 >
                   Return to Matrix
                 </button>
@@ -167,7 +185,7 @@ const Auth = () => {
                 <div className="flex flex-col gap-3">
                   <button 
                     onClick={() => handleSocialLogin('google')}
-                    className="w-full flex items-center justify-center gap-4 py-4 bg-bg-card border border-text-main/10 rounded-2xl hover:bg-text-main hover:text-bg-base transition-all text-label shadow-xl group"
+                    className="w-full flex items-center justify-center gap-4 py-4 bg-bg-card border border-text-main/10 rounded-2xl hover:bg-btn-main-bg hover:text-btn-main-text transition-all text-label shadow-xl group"
                   >
                     <div className="bg-bg-base p-1.5 rounded-lg border border-text-main/5 group-hover:scale-110 transition-transform">
                       <Chrome size={18} className="text-[#4285F4]" />
@@ -223,10 +241,10 @@ const Auth = () => {
                   <button 
                     type="submit" 
                     disabled={authLoading}
-                    className="mt-4 w-full bg-text-main text-bg-base py-5 rounded-2xl text-label shadow-deep hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                    className="mt-4 w-full btn-main flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     {authLoading ? (
-                      <div className="w-5 h-5 border-2 border-bg-base/30 border-t-bg-base rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-btn-main-text/30 border-t-btn-main-text rounded-full animate-spin"></div>
                     ) : (
                       <>
                         {isLogin ? <LogIn size={20} className="text-primary" /> : <UserPlus size={20} className="text-primary" />}
