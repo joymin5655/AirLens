@@ -59,10 +59,10 @@ const IntelligenceEngines = () => {
 
               <div className="space-y-4 relative z-10">
                 <div className="flex flex-col gap-1">
-                  <span className="text-label !text-primary !opacity-60 group-hover:!opacity-100 transition-opacity">{item.label}</span>
+                  <span className="text-label !text-primary !opacity-80 group-hover:!opacity-100 transition-opacity">{item.label}</span>
                   <h3 className="heading-lg !text-3xl group-hover:text-primary transition-colors duration-500">{item.title}</h3>
                 </div>
-                <p className="text-p leading-relaxed font-serif italic pr-4 opacity-80 group-hover:opacity-100 transition-opacity">{item.desc}</p>
+                <p className="text-p leading-relaxed font-serif italic pr-4 !text-text-main/70 group-hover:!text-text-main transition-opacity">{item.desc}</p>
               </div>
 
               <div className="pt-10 flex items-center justify-between relative z-10 group-hover:translate-x-2 transition-transform duration-700">

@@ -144,10 +144,10 @@ const PersonalVault = () => {
 
                   <div className="flex items-center justify-between group/row">
                     <div className="space-y-1">
-                       <p className="text-label !text-text-dim">Atmospheric Grading</p>
+                       <p className="text-label !text-text-dim/80">Atmospheric Grading</p>
                        <p className="heading-lg !text-2xl italic group-hover:text-primary transition-colors">{(cap.aqi_class as string) || 'Inference Active'}</p>
                     </div>
-                    <div className="w-12 h-12 rounded-2xl bg-text-main/5 flex items-center justify-center text-text-main group-hover:bg-primary group-hover:text-text-main transition-all duration-700 shadow-sm border border-text-main/5 group-hover:rotate-12">
+                    <div className="w-12 h-12 rounded-2xl bg-text-main/10 flex items-center justify-center text-text-main group-hover:bg-primary group-hover:text-black transition-all duration-700 shadow-sm border border-text-main/10 group-hover:rotate-12">
                       <ArrowRight size={20} />
                     </div>
                   </div>
