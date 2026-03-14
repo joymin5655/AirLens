@@ -14,10 +14,12 @@ const HeroProfile = () => {
   const [bio, setBio] = useState('');
   const [fullName, setFullName] = useState('');
   const [saving, setSaving] = useState(false);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     if (user) {
       setFullName(user.user_metadata?.full_name || '');
+      setLiked(localStorage.getItem(`airlens-liked-${user.id}`) === 'true');
       const fetchBio = async () => {
         const { data: profileData } = await supabase.from('profiles').select('bio').eq('id', user.id).single();
         if (profileData?.bio) setBio(profileData.bio);
@@ -25,6 +27,13 @@ const HeroProfile = () => {
       fetchBio();
     }
   }, [user]);
+
+  const handleToggleLiked = () => {
+    if (!user) return;
+    const next = !liked;
+    setLiked(next);
+    localStorage.setItem(`airlens-liked-${user.id}`, String(next));
+  };
 
   const handleUpdateProfile = async () => {
     if (!user) return;
@@ -117,10 +126,10 @@ const HeroProfile = () => {
                 transition={{ delay: 0.7 }}
                 className="flex flex-wrap gap-6 pt-6"
               >
-                <Link to="/globe" className="bg-text-main text-bg-base px-12 py-5 rounded-[28px] text-label shadow-deep hover:scale-110 hover:-translate-y-1 transition-all flex items-center gap-3 group">
+                <Link to="/globe" className="btn-main flex items-center gap-3 group">
                   <GlobeIcon size={20} className="text-primary group-hover:rotate-12 transition-transform" /> {t('LABELS.EXPLORE_DATA')}
                 </Link>
-                <Link to="/policy" className="bg-bg-card backdrop-blur-2xl border border-white/20 text-text-main px-12 py-5 rounded-[28px] text-label hover:bg-bg-base transition-all flex items-center gap-3 shadow-xl group">
+                <Link to="/policy" className="btn-alt flex items-center gap-3 group">
                   <Zap size={20} className="text-primary group-hover:scale-125 transition-transform" /> Policy Lab
                 </Link>
               </motion.div>
@@ -149,7 +158,7 @@ const HeroProfile = () => {
                 transition={{ delay: 0.6 }}
                 className="flex gap-6 pt-8"
               >
-                <Link to="/auth" className="bg-text-main text-bg-base px-14 py-6 rounded-full text-label shadow-deep hover:scale-110 hover:shadow-primary/20 transition-all flex items-center gap-4 group">
+                <Link to="/auth" className="btn-main !rounded-full px-14 py-6 flex items-center gap-4 group">
                   {t('LABELS.GET_STARTED')} <ArrowRight size={22} className="text-primary group-hover:translate-x-2 transition-transform" />
                 </Link>
               </motion.div>
@@ -170,7 +179,7 @@ const HeroProfile = () => {
                     <ShieldCheck size={120} className="text-primary" />
                  </div>
 
-                <div className="h-40 bg-text-main relative overflow-hidden group">
+                <div className="h-40 bg-btn-main-bg relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-1000"></div>
                   <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-3xl translate-x-10 -translate-y-10"></div>
 
@@ -222,10 +231,10 @@ const HeroProfile = () => {
                           />
                         </div>
                         <div className="flex gap-4 pt-2">
-                          <button onClick={handleUpdateProfile} disabled={saving} className="flex-1 bg-text-main text-bg-base py-4 rounded-[24px] text-label flex items-center justify-center gap-3 shadow-deep hover:scale-105 transition-all">
-                            {saving ? <div className="w-4 h-4 border-2 border-bg-base/30 border-t-bg-base rounded-full animate-spin"></div> : <><Save size={16} className="text-primary"/> {t('LABELS.SAVE_CHANGES')}</>}
+                          <button onClick={handleUpdateProfile} disabled={saving} className="btn-main flex-1 flex items-center justify-center gap-3">
+                            {saving ? <div className="w-4 h-4 border-2 border-btn-main-text/30 border-t-btn-main-text rounded-full animate-spin"></div> : <><Save size={16} className="text-primary"/> {t('LABELS.SAVE_CHANGES')}</>}
                           </button>
-                          <button onClick={() => setIsEditing(false)} className="px-8 bg-text-dim/5 text-text-dim py-4 rounded-[24px] text-label hover:bg-text-dim/10 transition-colors">{t('LABELS.CANCEL')}</button>
+                          <button onClick={() => setIsEditing(false)} className="btn-alt px-8">{t('LABELS.CANCEL')}</button>
                         </div>
                       </motion.div>
                     ) : (
@@ -263,12 +272,19 @@ const HeroProfile = () => {
                         <div className="flex gap-5">
                           <button 
                             onClick={() => setIsEditing(true)}
-                            className="flex-1 bg-bg-card border border-text-main/5 text-text-main py-5 rounded-[28px] text-label hover:bg-text-main hover:text-bg-base transition-all duration-700 shadow-xl flex items-center justify-center gap-3 group"
+                            className="btn-alt flex-1 flex items-center justify-center gap-3 group"
                           >
                             <Edit3 size={16} className="text-primary group-hover:scale-125 transition-transform" /> {t('LABELS.EDIT_PROFILE')}
                           </button>
-                          <button className="w-20 bg-primary text-text-main rounded-[28px] flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-500 shadow-glow border border-primary/30 group">
-                            <Heart size={24} className="group-hover:fill-text-main transition-colors" />
+                          <button
+                            onClick={handleToggleLiked}
+                            title={liked ? 'Unlike' : 'Like your journey'}
+                            className={`w-20 rounded-[28px] flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-500 shadow-glow border group ${liked ? 'bg-red-500 border-red-400/50 shadow-red-500/30' : 'bg-primary border-primary/30'}`}
+                          >
+                            <Heart
+                              size={24}
+                              className={`transition-all duration-300 ${liked ? 'fill-white text-white scale-110' : 'text-black group-hover:fill-black'}`}
+                            />
                           </button>
                         </div>
                       </motion.div>

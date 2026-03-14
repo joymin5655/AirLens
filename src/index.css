@@ -17,6 +17,12 @@
   --color-text-main: var(--text-main);
   --color-text-dim: var(--text-dim);
   --color-border-subtle: var(--border-subtle);
+  
+  /* Button Semantic Colors */
+  --color-btn-main-bg: var(--btn-main-bg);
+  --color-btn-main-text: var(--btn-main-text);
+  --color-btn-alt-bg: var(--btn-alt-bg);
+  --color-btn-alt-text: var(--btn-alt-text);
 
   --font-serif: "Crimson Pro", serif;
   --font-sans: "Inter", sans-serif;
@@ -27,20 +33,32 @@
 
 :root {
   --bg-base: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.95); /* More opaque */
-  --text-main: #0f172a; /* Slate 900 */
-  --text-dim: #475569;  /* Slate 600 */
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --text-main: #0f172a;
+  --text-dim: #475569;
   --border-subtle: rgba(15, 23, 42, 0.1);
   --noise-opacity: 0.015;
+  
+  /* Buttons Light */
+  --btn-main-bg: #0f172a; /* Dark for Light mode */
+  --btn-main-text: #f8fafc;
+  --btn-alt-bg: rgba(15, 23, 42, 0.05);
+  --btn-alt-text: #0f172a;
 }
 
 .dark {
-  --bg-base: #020617;   /* Deep Slate 950 */
-  --bg-card: rgba(15, 23, 42, 0.95); /* Deep Slate 900 - More opaque for text clarity */
-  --text-main: #f8fafc; /* Slate 50 */
-  --text-dim: #cbd5e1;  /* Slate 300 - Brighter for better contrast */
+  --bg-base: #020617;
+  --bg-card: rgba(15, 23, 42, 0.95);
+  --text-main: #f8fafc;
+  --text-dim: #cbd5e1;
   --border-subtle: rgba(255, 255, 255, 0.15);
   --noise-opacity: 0.02;
+  
+  /* Buttons Dark */
+  --btn-main-bg: #f8fafc; /* Light for Dark mode */
+  --btn-main-text: #020617;
+  --btn-alt-bg: rgba(255, 255, 255, 0.1);
+  --btn-alt-text: #f8fafc;
 }
 
 @layer base {
@@ -112,6 +130,19 @@
 
   .text-label {
     @apply font-sans text-[10px] font-black uppercase tracking-[0.25em] text-text-main;
+  }
+
+  /* Semantic Buttons */
+  .btn-primary {
+    @apply bg-primary text-black font-black uppercase tracking-widest text-[10px] sm:text-xs px-8 py-4 rounded-2xl shadow-deep hover:scale-[1.03] active:scale-95 transition-all duration-300 shadow-primary/20;
+  }
+
+  .btn-main {
+    @apply bg-btn-main-bg text-btn-main-text font-black uppercase tracking-widest text-[10px] sm:text-xs px-8 py-4 rounded-2xl shadow-deep hover:scale-[1.03] active:scale-95 transition-all duration-500;
+  }
+
+  .btn-alt {
+    @apply bg-btn-alt-bg text-btn-alt-text font-black uppercase tracking-widest text-[10px] sm:text-xs px-8 py-4 rounded-2xl hover:bg-primary hover:text-black hover:scale-[1.03] active:scale-95 transition-all duration-500 border border-border-subtle;
   }
 }
 

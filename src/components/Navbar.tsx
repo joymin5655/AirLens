@@ -1,31 +1,80 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, User, LogOut, ChevronDown, Bell, Search, Sun, Moon } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Menu, X, User, LogOut, ChevronDown, Bell, Search, Sun, Moon, BarChart3, Globe, Camera, Activity, Zap, BookOpen, DollarSign, Home } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../logic/useAuthStore';
 import { useThemeStore } from '../logic/useThemeStore';
 import { APP_CONFIG } from '../logic/config';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const SEARCH_PAGES = [
+  { name: 'Dashboard', path: '/', desc: 'Real-time air quality overview', icon: Home },
+  { name: 'Globe View', path: '/globe', desc: '3D atmospheric visualization', icon: Globe },
+  { name: 'Camera AI', path: '/camera', desc: 'AI sky photo PM2.5 sensing', icon: Camera },
+  { name: 'Analytics', path: '/analytics', desc: 'Global policy effectiveness rankings', icon: BarChart3 },
+  { name: 'Impact Lab', path: '/policy', desc: 'Causal policy analysis (SDID)', icon: Activity },
+  { name: 'Pricing', path: '/pricing', desc: 'Mission membership plans', icon: DollarSign },
+  { name: 'Resources', path: '/about', desc: 'Data sources & methodology', icon: BookOpen },
+  { name: 'Profile Settings', path: '/profile', desc: 'Manage your account', icon: User },
+];
+
+const MOCK_NOTIFS = [
+  { id: 1, title: 'Policy Data Updated', msg: 'South Korea Q4 2024 atmospheric dataset synced', time: '2h ago', read: false },
+  { id: 2, title: 'PM2.5 Alert', msg: 'Beijing exceeds WHO daily limit — 89.4 µg/m³ detected', time: '5h ago', read: false },
+  { id: 3, title: 'Matrix Refreshed', msg: 'Global Analytics Matrix updated (66 nodes active)', time: '1d ago', read: true },
+  { id: 4, title: 'Camera AI Result', msg: 'Last sky scan: Grade A · 12.3 µg/m³ estimated', time: '2d ago', read: true },
+];
+
 const Navbar = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showNotifs, setShowNotifs] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [notifs, setNotifs] = useState(MOCK_NOTIFS);
   const location = useLocation();
-  const { user, isAdmin, loading, signOut } = useAuthStore();
+  const navigate = useNavigate();
+  const notifsRef = useRef<HTMLDivElement>(null);
+  const { user, isAdmin, isAnonymous, loading, signOut } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
 
+  const unreadCount = notifs.filter(n => !n.read).length;
+  const searchResults = searchQuery.trim()
+    ? SEARCH_PAGES.filter(p =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.desc.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : SEARCH_PAGES;
+
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setShowSearch(false); setShowNotifs(false); }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (notifsRef.current && !notifsRef.current.contains(e.target as Node)) {
+        setShowNotifs(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const links = [
     { name: t('NAV.STORY'), path: '/' },
     { name: t('NAV.GLOBE'), path: '/globe' },
+    { name: 'Camera AI', path: '/camera' },
     { name: 'Analytics', path: '/analytics' },
     { name: t('NAV.IMPACT'), path: '/policy' },
     { name: 'Pricing', path: '/pricing' },
@@ -93,20 +142,69 @@ const Navbar = () => {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          <button className={`p-2.5 rounded-2xl transition-all ${isGlobe && !scrolled ? 'text-white/40 hover:text-white hover:bg-white/10' : 'text-text-dim hover:text-text-main hover:bg-text-main/5'}`}>
+          <button
+            onClick={() => { setShowSearch(true); setShowNotifs(false); }}
+            className={`p-2.5 rounded-2xl transition-all ${isGlobe && !scrolled ? 'text-white/40 hover:text-white hover:bg-white/10' : 'text-text-dim hover:text-text-main hover:bg-text-main/5'}`}
+          >
             <Search size={18} />
           </button>
-          
-          <button className={`p-2.5 rounded-2xl transition-all relative ${isGlobe && !scrolled ? 'text-white/40 hover:text-white hover:bg-white/10' : 'text-text-dim hover:text-text-main hover:bg-text-main/5'}`}>
-            <Bell size={18} />
-            <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_#25e2f4]"></span>
-          </button>
+
+          <div className="relative" ref={notifsRef}>
+            <button
+              onClick={() => { setShowNotifs(!showNotifs); setShowSearch(false); }}
+              className={`p-2.5 rounded-2xl transition-all relative ${isGlobe && !scrolled ? 'text-white/40 hover:text-white hover:bg-white/10' : 'text-text-dim hover:text-text-main hover:bg-text-main/5'}`}
+            >
+              <Bell size={18} />
+              {unreadCount > 0 && (
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_#25e2f4]"></span>
+              )}
+            </button>
+            <AnimatePresence>
+              {showNotifs && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-full mt-4 w-80 bg-bg-card border border-white/20 rounded-[32px] shadow-2xl py-4 z-50"
+                >
+                  <div className="px-6 py-3 flex items-center justify-between border-b border-text-main/10">
+                    <span className="text-label">Notifications</span>
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={() => setNotifs(prev => prev.map(n => ({ ...n, read: true })))}
+                        className="text-[9px] font-black text-primary hover:underline uppercase tracking-widest"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+                  <div className="divide-y divide-text-main/5">
+                    {notifs.map(n => (
+                      <div
+                        key={n.id}
+                        className={`px-6 py-4 flex gap-3 hover:bg-text-main/5 transition-colors cursor-pointer ${n.read ? 'opacity-50' : ''}`}
+                        onClick={() => setNotifs(prev => prev.map(x => x.id === n.id ? { ...x, read: true } : x))}
+                      >
+                        <div className={`mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0 ${n.read ? 'bg-transparent' : 'bg-primary shadow-[0_0_6px_#25e2f4]'}`} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-black text-text-main">{n.title}</p>
+                          <p className="text-[10px] text-text-dim mt-0.5 leading-relaxed">{n.msg}</p>
+                          <p className="text-[9px] text-text-dim/50 mt-1 uppercase tracking-widest font-bold">{n.time}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <div className={`h-6 w-px mx-3 ${isGlobe && !scrolled ? 'bg-white/10' : 'bg-text-main/10'}`}></div>
 
           {loading ? (
             <div className="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin"></div>
-          ) : user ? (
+          ) : user && !isAnonymous ? (
             <div className="relative group flex items-center gap-3 cursor-pointer">
               <div className="flex flex-col items-end hidden sm:flex">
                 <span className={`text-[9px] font-black uppercase tracking-widest ${isGlobe && !scrolled ? 'text-white' : 'text-text-main'}`}>
@@ -142,11 +240,11 @@ const Navbar = () => {
               </div>
             </div>
           ) : (
-            <Link 
+            <Link
               to="/auth"
-              className="bg-text-main text-bg-base px-7 py-3 rounded-2xl text-label shadow-2xl hover:scale-105 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2"
+              className="btn-main px-7 py-3 flex items-center gap-2"
             >
-              <User size={16} className="text-primary" />
+              <User size={16} />
               {t('NAV.SIGN_IN')}
             </Link>
           )}
@@ -159,6 +257,64 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+
+      {/* Search Overlay */}
+      <AnimatePresence>
+        {showSearch && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-bg-base/80 backdrop-blur-xl flex items-start justify-center pt-32 px-6"
+            onClick={() => { setShowSearch(false); setSearchQuery(''); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -16, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -16, scale: 0.97 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-xl bg-bg-card border border-white/20 rounded-[32px] shadow-2xl overflow-hidden"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-4 p-5 border-b border-text-main/10">
+                <Search size={18} className="text-primary flex-shrink-0" />
+                <input
+                  autoFocus
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search pages, features..."
+                  className="flex-1 bg-transparent outline-none text-text-main placeholder:text-text-dim font-medium text-sm"
+                />
+                <kbd className="text-[10px] text-text-dim border border-text-main/10 px-2 py-1 rounded-lg font-mono hidden sm:block">ESC</kbd>
+              </div>
+              <div className="p-3 max-h-80 overflow-y-auto">
+                {searchResults.map(page => {
+                  const Icon = page.icon;
+                  return (
+                    <button
+                      key={page.path}
+                      onClick={() => { navigate(page.path); setShowSearch(false); setSearchQuery(''); }}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-text-main/5 text-left transition-colors group"
+                    >
+                      <div className="w-9 h-9 bg-text-main/5 rounded-xl flex items-center justify-center group-hover:bg-primary/10 transition-colors flex-shrink-0">
+                        <Icon size={16} className="text-text-dim group-hover:text-primary transition-colors" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-text-main">{page.name}</p>
+                        <p className="text-[10px] text-text-dim">{page.desc}</p>
+                      </div>
+                      <Zap size={12} className="ml-auto text-text-dim/20 group-hover:text-primary/40 transition-colors" />
+                    </button>
+                  );
+                })}
+                {searchResults.length === 0 && (
+                  <p className="text-center text-text-dim text-sm py-8 font-medium">No results for "{searchQuery}"</p>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isOpen && (
@@ -185,7 +341,7 @@ const Navbar = () => {
                 <Link 
                   to="/auth"
                   onClick={() => setIsOpen(false)}
-                  className="bg-text-main text-bg-base p-5 rounded-[24px] text-center shadow-2xl font-black tracking-widest"
+                  className="btn-main p-5 text-center"
                 >
                   {t('NAV.SIGN_IN')}
                 </Link>

@@ -1,8 +1,19 @@
 import { Check, ShieldCheck, Zap, Globe, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 
 const Pricing = () => {
+  const navigate = useNavigate();
+
+  const handlePlanClick = (tierName: string) => {
+    if (tierName === 'Free') {
+      navigate('/auth');
+    } else {
+      alert('Stripe payment coming soon. Contact us at hello@airlens.earth for early access.');
+    }
+  };
+
   const tiers = [
     {
       name: 'Free',
@@ -112,7 +123,10 @@ const Pricing = () => {
               ))}
             </div>
 
-            <button className={`w-full py-5 rounded-2xl text-label shadow-deep transition-all duration-300 font-black ${tier.highlight ? 'bg-primary text-black hover:scale-[1.03] active:scale-95 shadow-primary/20' : 'bg-text-main/10 text-text-main hover:bg-primary hover:text-black hover:scale-[1.03]'}`}>
+            <button
+              onClick={() => handlePlanClick(tier.name)}
+              className={tier.highlight ? 'btn-primary w-full py-5' : 'btn-alt w-full py-5'}
+            >
               {tier.btnText}
             </button>
           </motion.div>
@@ -129,7 +143,10 @@ const Pricing = () => {
             Environmental researchers, university labs, and non-profit NGOs are eligible for 75% to 100% discounts. We believe data transparency is a fundamental right.
           </p>
         </div>
-        <button className="text-label text-primary border-b-2 border-primary/30 pb-1 hover:border-primary hover:scale-105 transition-all">
+        <button
+          onClick={() => alert('Academic grant applications: contact hello@airlens.earth')}
+          className="text-label text-primary border-b-2 border-primary/30 pb-1 hover:border-primary hover:scale-105 transition-all"
+        >
           Apply for Academic Grant
         </button>
       </div>

@@ -5,27 +5,27 @@ import { supabase } from './supabase';
 interface AuthStore {
   user: User | null;
   isAdmin: boolean;
+  isAnonymous: boolean;
   loading: boolean;
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
   checkAdminStatus: (userId: string) => Promise<void>;
+  signInAnonymously: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   user: null,
   isAdmin: false,
+  isAnonymous: false,
   loading: true,
   setUser: (user) => {
-    // 초기 설정 시 기본적인 메타데이터 확인
-    const isAdmin = !!user && (
-      user.app_metadata?.role === 'admin'
-    );
-    
-    set({ user, isAdmin, loading: false });
-    
-    // 만약 유저가 로그인했는데 isAdmin이 아직 false라면 DB 재확인
-    if (user && !isAdmin) {
+    const isAdmin = !!user && user.app_metadata?.role === 'admin';
+    const isAnonymous = !!user?.is_anonymous;
+
+    set({ user, isAdmin, isAnonymous, loading: false });
+
+    if (user && !isAdmin && !isAnonymous) {
       get().checkAdminStatus(user.id);
     }
   },
@@ -47,6 +47,21 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       }
     } catch (err) {
       console.warn('Failed to check admin status or profile not found:', err);
+    }
+  },
+
+  /**
+   * 익명 로그인 (세션 없을 때 자동 호출)
+   */
+  signInAnonymously: async () => {
+    try {
+      const { data, error } = await supabase.auth.signInAnonymously();
+      if (!error && data.user) {
+        set({ user: data.user, isAnonymous: true, isAdmin: false, loading: false });
+      }
+    } catch (err) {
+      console.warn('Anonymous sign-in failed:', err);
+      set({ loading: false });
     }
   },
 

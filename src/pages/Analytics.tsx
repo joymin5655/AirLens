@@ -1,18 +1,70 @@
-import { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, AlertTriangle, ArrowUpRight, ArrowDownRight, Info, Filter, Download, Globe, Zap, ShieldCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { BarChart3, TrendingUp, AlertTriangle, ArrowUpRight, ArrowDownRight, Info, Filter, Download, Globe, Zap, ShieldCheck, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { fetchPolicyIndex } from '../logic/policyService';
 import type { PolicyIndexEntry } from '../logic/types';
 
+/**
+ * 실제 데이터 기반 결정론적 점수 계산
+ * - policyCount: 정책 깊이 (최대 50점)
+ * - lastUpdated: 데이터 신선도 (최대 30점)
+ * - countryCode 해시: 고정된 편차 (최대 19점)
+ * 동일 국가는 필터 여부와 무관하게 항상 같은 점수를 가짐
+ */
+const getScore = (c: PolicyIndexEntry): number => {
+  const policyScore = Math.min(50, c.policyCount * 10);
+  const monthsOld = (Date.now() - new Date(c.lastUpdated).getTime()) / (1000 * 60 * 60 * 24 * 30);
+  const freshnessScore = Math.max(0, 30 - Math.floor(monthsOld * 1.5));
+  const codeHash = c.countryCode.split('').reduce((a, ch) => a + ch.charCodeAt(0), 0);
+  const hashScore = codeHash % 20;
+  return Math.min(99, policyScore + freshnessScore + hashScore);
+};
+
 const Analytics = () => {
   const [countries, setCountries] = useState<PolicyIndexEntry[]>([]);
+  const [showFilter, setShowFilter] = useState(false);
+  const [regionFilter, setRegionFilter] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchPolicyIndex().then(data => {
       setCountries(data);
     });
   }, []);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setShowFilter(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const regions = [...new Set(countries.map(c => c.region))].filter(Boolean).sort() as string[];
+  const filteredCountries = (regionFilter ? countries.filter(c => c.region === regionFilter) : countries)
+    .map(c => ({ ...c, score: getScore(c) }))
+    .sort((a, b) => b.score - a.score);
+  const displayedCountries = showAll ? filteredCountries : filteredCountries.slice(0, 8);
+
+  const handleDownload = () => {
+    const header = 'Rank,Country,Code,Region,Score,Policy Count,Last Updated\n';
+    const rows = filteredCountries.map((c, i) =>
+      `${i + 1},"${c.country}",${c.countryCode},"${c.region}",${c.score},${c.policyCount},${c.lastUpdated}`
+    ).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `airlens-global-matrix-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const globalStats = [
     { label: 'Global PM2.5 Avg', value: '28.4', unit: 'µg/m³', trend: -2.4, status: 'improving', color: 'text-primary' },
@@ -92,9 +144,52 @@ const Analytics = () => {
                 </h3>
                 <p className="text-label !text-text-dim ml-11">Cross-Border Benchmark Matrix</p>
               </div>
-              <div className="flex gap-3 ml-11 sm:ml-0">
-                <button className="p-3 bg-bg-card text-text-main rounded-2xl hover:bg-primary hover:text-text-main transition-all border border-border-subtle shadow-inner"><Filter size={20} /></button>
-                <button className="p-3 bg-bg-card text-text-main rounded-2xl hover:bg-primary hover:text-text-main transition-all border border-border-subtle shadow-inner"><Download size={20} /></button>
+              <div className="flex gap-3 ml-11 sm:ml-0 items-center">
+                <div className="relative" ref={filterRef}>
+                  <button
+                    onClick={() => setShowFilter(!showFilter)}
+                    className={`p-3 rounded-2xl transition-all border border-border-subtle shadow-inner flex items-center gap-2 ${showFilter || regionFilter ? 'bg-primary text-black' : 'bg-bg-card text-text-main hover:bg-primary hover:text-black'}`}
+                  >
+                    <Filter size={20} />
+                    {regionFilter && <span className="text-[10px] font-black max-w-[80px] truncate">{regionFilter}</span>}
+                    <ChevronDown size={14} className={`transition-transform ${showFilter ? 'rotate-180' : ''}`} />
+                  </button>
+                  <AnimatePresence>
+                    {showFilter && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full mt-3 w-52 bg-bg-card border border-white/20 rounded-[24px] shadow-2xl p-3 z-50 space-y-1"
+                      >
+                        <p className="text-label !text-text-dim px-3 py-2 border-b border-text-main/10 mb-1">Filter by Region</p>
+                        <button
+                          onClick={() => { setRegionFilter(null); setShowAll(false); setShowFilter(false); }}
+                          className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${!regionFilter ? 'bg-primary text-black' : 'hover:bg-text-main/5 text-text-main'}`}
+                        >
+                          All Regions
+                        </button>
+                        {regions.map(r => (
+                          <button
+                            key={r}
+                            onClick={() => { setRegionFilter(r); setShowAll(true); setShowFilter(false); }}
+                            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${regionFilter === r ? 'bg-primary text-black' : 'hover:bg-text-main/5 text-text-main'}`}
+                          >
+                            {r}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                <button
+                  onClick={handleDownload}
+                  title="Download as CSV"
+                  className="p-3 bg-bg-card text-text-main rounded-2xl hover:bg-primary hover:text-black transition-all border border-border-subtle shadow-inner"
+                >
+                  <Download size={20} />
+                </button>
               </div>
             </div>
             <div className="overflow-x-auto">
@@ -108,7 +203,7 @@ const Analytics = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-subtle">
-                  {countries.slice(0, 8).map((c, i) => (
+                  {displayedCountries.map((c, i) => (
                     <tr key={c.countryCode} className="hover:bg-primary/10 transition-colors group cursor-pointer">
                       <td className="px-10 py-8 text-p !text-text-dim group-hover:text-primary">#{(i + 1).toString().padStart(2, '0')}</td>
                       <td className="px-10 py-8">
@@ -123,14 +218,14 @@ const Analytics = () => {
                       <td className="px-10 py-8">
                         <div className="flex items-center gap-6 min-w-[180px]">
                           <div className="flex-1 h-2 bg-bg-base rounded-full overflow-hidden shadow-inner">
-                            <motion.div 
+                            <motion.div
                               initial={{ width: 0 }}
-                              animate={{ width: `${85 - i * 4}%` }}
+                              animate={{ width: `${c.score}%` }}
                               transition={{ duration: 1.5, delay: 0.5 + i * 0.1 }}
                               className="h-full bg-primary shadow-[0_0_12px_rgba(37,226,244,0.5)] rounded-full"
                             />
                           </div>
-                          <span className="text-p !text-text-main font-black">{85 - i * 4}.2</span>
+                          <span className="text-p !text-text-main font-black">{c.score}</span>
                         </div>
                       </td>
                       <td className="px-10 py-8">
@@ -145,7 +240,15 @@ const Analytics = () => {
               </table>
             </div>
             <div className="p-8 bg-bg-base text-center">
-               <button className="text-label !text-text-dim hover:text-primary transition-colors">Expand Full Registry Matrix</button>
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="text-label !text-text-dim hover:text-primary transition-colors flex items-center gap-2 mx-auto"
+              >
+                <ChevronDown size={14} className={`transition-transform duration-300 ${showAll ? 'rotate-180' : ''}`} />
+                {showAll
+                  ? 'Collapse Registry Matrix'
+                  : `Expand Full Registry Matrix (${filteredCountries.length} nodes)`}
+              </button>
             </div>
           </div>
         </div>

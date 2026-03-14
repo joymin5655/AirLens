@@ -15,6 +15,8 @@ const PolicyView = () => {
   const [policyData, setPolicyData] = useState<CountryPolicy | null>(null);
   const [loading, setLoading] = useState(true);
   
+  const [showSimulation, setShowSimulation] = useState(false);
+
   // Comparison state
   const [viewMode, setViewMode] = useState<'analysis' | 'comparison'>('analysis');
   const [compareList, setCompareList] = useState<PolicyIndexEntry[]>([]);
@@ -81,6 +83,48 @@ const PolicyView = () => {
 
   const activePolicy = policyData?.policies[0];
 
+  const computeSimulation = () => {
+    if (!activePolicy?.timeline?.length) return null;
+    const tl = [...activePolicy.timeline].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    if (tl.length < 2) return null;
+    const first = tl[0];
+    const last = tl[tl.length - 1];
+    const yearSpan = new Date(last.date).getFullYear() - new Date(first.date).getFullYear();
+    if (yearSpan === 0) return null;
+    const annualRate = (last.pm25 - first.pm25) / yearSpan;
+    const currentYear = new Date(last.date).getFullYear();
+    const currentPm25 = last.pm25;
+    const projections = [1, 2, 3, 5].map(years => ({
+      label: `+${years}yr`,
+      year: currentYear + years,
+      pm25: parseFloat(Math.max(0, currentPm25 + annualRate * years).toFixed(1)),
+    }));
+    const yearsToWHO =
+      annualRate < 0 && currentPm25 > 5
+        ? Math.ceil((currentPm25 - 5) / Math.abs(annualRate))
+        : null;
+    return { annualRate: parseFloat(annualRate.toFixed(2)), currentPm25, currentYear, projections, yearsToWHO, dataPoints: tl.length };
+  };
+
+  const handleExport = () => {
+    if (!activePolicy || !selectedCountry) return;
+    const header = 'Date,Event,PM2.5 (µg/m³),Synthetic PM2.5 (µg/m³)\n';
+    const rows = activePolicy.timeline.map(t =>
+      `${t.date},"${t.event.replace(/"/g, '""')}",${t.pm25},${t.syntheticPM25 ?? ''}`
+    ).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `airlens-${selectedCountry.countryCode}-policy.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const comparisonDatasets = compareList.map((c, i) => ({
     label: c.country,
     data: compareData[c.countryCode]?.policies[0]?.timeline || [],
@@ -139,10 +183,18 @@ const PolicyView = () => {
         
         <div className="flex flex-col sm:flex-row items-center gap-6 w-full xl:w-auto">
           <div className="flex gap-3 w-full sm:w-auto">
-            <button className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-10 py-5 bg-text-main text-bg-base rounded-[28px] text-label shadow-deep hover:scale-105 active:scale-95 transition-all group">
-              <PlayCircle size={20} className="text-primary group-hover:rotate-12 transition-transform" /> Simulation
+            <button
+              onClick={() => activePolicy && setShowSimulation(true)}
+              disabled={!activePolicy}
+              className="flex-1 sm:flex-none btn-main flex items-center justify-center gap-3 group disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <PlayCircle size={20} className="group-hover:rotate-12 transition-transform" /> Simulation
             </button>
-            <button className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-10 py-5 bg-bg-card border border-text-main/5 text-text-main rounded-[28px] text-label hover:bg-text-main hover:text-bg-base transition-all duration-700 shadow-xl group">
+            <button
+              onClick={handleExport}
+              disabled={!activePolicy}
+              className="flex-1 sm:flex-none btn-alt flex items-center justify-center gap-3 group disabled:opacity-40 disabled:cursor-not-allowed"
+            >
               <Download size={20} className="text-primary group-hover:-translate-y-1 transition-transform" /> Export
             </button>
           </div>
@@ -403,6 +455,92 @@ const PolicyView = () => {
           </AnimatePresence>
         </div>
       </div>
+      {/* Simulation Modal */}
+      <AnimatePresence>
+        {showSimulation && (() => {
+          const sim = computeSimulation();
+          return (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[150] bg-bg-base/80 backdrop-blur-xl flex items-center justify-center p-6"
+              onClick={() => setShowSimulation(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="w-full max-w-lg narrative-card !p-10 space-y-8"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <h3 className="heading-lg !text-2xl flex items-center gap-3">
+                      <PlayCircle className="text-primary" size={24} /> 5-Year Simulation
+                    </h3>
+                    <p className="text-label !text-text-dim">{selectedCountry?.country} · Linear Trend Projection</p>
+                  </div>
+                  <button onClick={() => setShowSimulation(false)} className="p-2 hover:bg-text-main/10 rounded-xl transition-colors">
+                    <X size={20} className="text-text-dim" />
+                  </button>
+                </div>
+
+                {sim ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-5 bg-bg-base rounded-2xl border border-border-subtle">
+                        <p className="text-label !text-text-dim mb-2">Current PM2.5</p>
+                        <p className="text-3xl font-black text-text-main">{sim.currentPm25} <span className="text-label !text-text-dim">µg/m³</span></p>
+                      </div>
+                      <div className="p-5 bg-bg-base rounded-2xl border border-border-subtle">
+                        <p className="text-label !text-text-dim mb-2">Annual Rate</p>
+                        <p className={`text-3xl font-black ${sim.annualRate < 0 ? 'text-emerald-500' : 'text-red-400'}`}>
+                          {sim.annualRate > 0 ? '+' : ''}{sim.annualRate} <span className="text-label !text-text-dim">µg/yr</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {sim.projections.map((p, i) => (
+                        <div key={i} className="flex items-center gap-4">
+                          <span className="text-label !text-text-dim w-10">{p.label}</span>
+                          <div className="flex-1 h-2 bg-bg-base rounded-full overflow-hidden border border-border-subtle">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${Math.min(100, (p.pm25 / (sim.currentPm25 * 1.2)) * 100)}%` }}
+                              transition={{ duration: 0.8, delay: i * 0.1 }}
+                              className={`h-full rounded-full ${p.pm25 <= 12 ? 'bg-emerald-500' : p.pm25 <= 35 ? 'bg-yellow-400' : p.pm25 <= 55 ? 'bg-orange-400' : 'bg-red-500'}`}
+                            />
+                          </div>
+                          <span className="text-sm font-black text-text-main w-20 text-right">{p.pm25} µg/m³</span>
+                          <span className="text-label !text-text-dim w-12 text-right">{p.year}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className={`p-5 rounded-2xl border ${sim.yearsToWHO ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'}`}>
+                      {sim.yearsToWHO ? (
+                        <p className="text-sm font-semibold text-emerald-500">
+                          At current rate, projected to reach WHO 5 µg/m³ target in <strong>{sim.yearsToWHO} years</strong> ({sim.currentYear + sim.yearsToWHO}).
+                        </p>
+                      ) : (
+                        <p className="text-sm font-semibold text-red-400">
+                          Current trend is not on track to reach the WHO 5 µg/m³ annual target. Policy intensification required.
+                        </p>
+                      )}
+                    </div>
+
+                    <p className="text-[10px] text-text-dim italic text-center">Linear projection based on {sim.dataPoints} historical data points. Not a guarantee of future outcomes.</p>
+                  </>
+                ) : (
+                  <p className="text-p text-center py-8">Insufficient historical data for projection simulation.</p>
+                )}
+              </motion.div>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
     </div>
   );
 };

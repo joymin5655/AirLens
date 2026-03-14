@@ -4,8 +4,11 @@ import PlatformHub from '../components/dashboard/PlatformHub';
 import HeroProfile from '../components/dashboard/HeroProfile';
 import LocalSensing from '../components/dashboard/LocalSensing';
 import PersonalVault from '../components/dashboard/PersonalVault';
+import { useAuthStore } from '../logic/useAuthStore';
 
 const Dashboard = () => {
+  const { user } = useAuthStore();
+
   return (
     <div className="h-screen overflow-x-auto overflow-y-hidden no-scrollbar snap-x snap-mandatory flex bg-bg-base transition-colors duration-500 selection:bg-primary/20">
       <Helmet>
@@ -33,10 +36,12 @@ const Dashboard = () => {
         <PlatformHub />
       </div>
 
-      {/* Chapter 4: Personal Vault (Archive) */}
-      <div className="snap-center shrink-0">
-        <PersonalVault />
-      </div>
+      {/* Chapter 4: Personal Vault (Archive) — 로그인 사용자만 */}
+      {user && (
+        <div className="snap-center shrink-0">
+          <PersonalVault />
+        </div>
+      )}
     </div>
   );
 };
