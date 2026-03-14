@@ -113,7 +113,7 @@ const LocalSensing = () => {
             <p className="text-2xl text-text-main leading-relaxed font-serif italic relative z-10">
               "{getHealthAdvice(currentGrade)}"
             </p>
-            <div className={`inline-flex items-center gap-4 px-6 py-3 rounded-full text-label relative z-10 shadow-glow transition-all duration-500 ${currentGrade === 'Good' ? 'bg-emerald-500 text-white shadow-emerald-500/30' : 'bg-primary text-earth-brown shadow-primary/30'}`}>
+            <div className={`inline-flex items-center gap-4 px-6 py-3 rounded-full text-label relative z-10 shadow-glow transition-all duration-500 ${currentGrade === 'Good' ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-primary text-text-main shadow-primary/30'}`}>
               <Zap size={16} className="animate-pulse" /> {currentGrade} Level Active
             </div>
           </motion.div>
@@ -146,7 +146,7 @@ const LocalSensing = () => {
               <div className="h-20 w-full">
                 <Line data={sparklineData} options={sparklineOptions} />
               </div>
-              <div className="flex justify-between items-center pt-2 border-t border-text-main/5">
+              <div className="flex justify-between items-center pt-2 border-t border-text-main/10">
                  <span className="text-[9px] font-black uppercase text-text-dim/60">Seasonal Drift Adjusted</span>
                  <span className="text-[9px] font-black uppercase text-primary">v1.1 Fusion</span>
               </div>
@@ -155,21 +155,21 @@ const LocalSensing = () => {
 
           <motion.div 
             whileHover={{ y: -8 }}
-            className="md:col-span-2 narrative-card !bg-earth-brown !text-white flex flex-col md:flex-row items-center justify-between p-12 group overflow-hidden relative !rounded-[56px] shadow-deep"
+            className="md:col-span-2 narrative-card !bg-text-main !text-bg-base flex flex-col md:flex-row items-center justify-between p-12 group overflow-hidden relative !rounded-[56px] shadow-deep"
           >
              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
              <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] group-hover:scale-150 transition-transform duration-1000"></div>
 
              <div className="space-y-6 relative z-10 max-w-xl text-center md:text-left">
-               <div className="inline-flex items-center gap-3 bg-white/10 px-4 py-1.5 rounded-full border border-white/10">
+               <div className="inline-flex items-center gap-3 bg-bg-base/10 px-4 py-1.5 rounded-full border border-bg-base/10">
                   <TrendingUp size={14} className="text-primary"/>
                   <p className="text-label !text-primary/80">Global Benchmark</p>
                </div>
-               <h4 className="text-4xl md:text-5xl font-black tracking-tighter leading-none">Decode Your Atmospheric <span className="text-primary italic">Standing.</span></h4>
-               <p className="text-lg text-white/50 font-serif italic leading-relaxed">"Your local PM2.5 concentration is currently 12.4% below the global urban median of 28.5 µg/m³."</p>
+               <h4 className="heading-xl !text-4xl md:!text-5xl !text-bg-base">Decode Your Atmospheric <span className="text-primary italic">Standing.</span></h4>
+               <p className="text-lg text-bg-base/60 font-serif italic leading-relaxed">"Your local PM2.5 concentration is currently 12.4% below the global urban median of 28.5 µg/m³."</p>
              </div>
 
-             <Link to="/globe" className="mt-8 md:mt-0 w-24 h-24 bg-white/10 backdrop-blur-3xl rounded-[32px] flex items-center justify-center hover:bg-primary hover:text-earth-brown transition-all duration-700 relative z-10 border border-white/20 group/btn shadow-2xl">
+             <Link to="/globe" className="mt-8 md:mt-0 w-24 h-24 bg-bg-base/10 backdrop-blur-3xl rounded-[32px] flex items-center justify-center hover:bg-primary hover:text-text-main transition-all duration-700 relative z-10 border border-bg-base/20 group/btn shadow-2xl">
                <ArrowRight size={32} className="group-hover/btn:translate-x-2 transition-transform duration-500" />
              </Link>
           </motion.div>

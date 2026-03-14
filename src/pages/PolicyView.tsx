@@ -109,19 +109,19 @@ const PolicyView = () => {
             {compareList.length > 0 && viewMode === 'comparison' && (
               <motion.div 
                 initial={{ scale: 0 }} animate={{ scale: 1 }}
-                className="inline-flex items-center gap-2 bg-primary text-earth-brown px-4 py-2 rounded-full shadow-glow border border-primary/20"
+                className="inline-flex items-center gap-2 bg-primary text-text-main px-4 py-2 rounded-full shadow-glow border border-primary/20"
               >
-                <span className="text-[9px] font-black uppercase tracking-widest">{compareList.length} Nodes Selected</span>
+                <span className="text-label !text-text-main">Nodes Selected</span>
               </motion.div>
             )}
           </div>
           
-          <h1 className="heading-xl !text-6xl md:!text-8xl">
+          <h1 className="heading-xl">
             Impact <span className="text-primary italic font-serif font-light">Laboratory</span>
           </h1>
           
           {/* View Mode Tabs */}
-          <div className="flex gap-2 p-1.5 bg-text-main/5 rounded-[24px] w-fit border border-text-main/5 backdrop-blur-xl shadow-inner">
+          <div className="flex gap-2 p-1.5 bg-bg-base rounded-[24px] w-fit border border-border-subtle backdrop-blur-xl shadow-inner">
             <button 
               onClick={() => setViewMode('analysis')}
               className={`flex items-center gap-3 px-8 py-3 rounded-[20px] text-label transition-all duration-500 ${viewMode === 'analysis' ? 'bg-bg-card text-text-main shadow-xl border border-white/10' : 'text-text-dim hover:bg-bg-card/40'}`}
@@ -183,10 +183,10 @@ const PolicyView = () => {
                     <motion.div 
                       key={c.countryCode} 
                       layout
-                      className="flex items-center gap-4 px-4 py-3 bg-text-main/5 rounded-2xl border border-text-main/5 shadow-sm group hover:border-primary/30 transition-all"
+                      className="flex items-center gap-4 px-4 py-3 bg-bg-base rounded-2xl border border-border-subtle shadow-sm group hover:border-primary/30 transition-all"
                     >
                       <div className="w-2.5 h-2.5 rounded-full shadow-lg" style={{ backgroundColor: ['#25e2f4', '#f97316', '#8b5cf6', '#10b981'][i] }}></div>
-                      <span className="text-[11px] font-black text-text-main flex-1 tracking-tight">{c.country}</span>
+                      <span className="text-p !text-text-main !text-[11px] flex-1 tracking-tight">{c.country}</span>
                       <button onClick={() => removeFromCompare(c.countryCode)} className="text-text-dim hover:text-red-500 transition-colors">
                         <X size={14} />
                       </button>
@@ -235,12 +235,12 @@ const PolicyView = () => {
                             </h3>
                             <p className="text-label !text-text-dim !opacity-60 ml-1">Fusing Synthetic Control Weights</p>
                           </div>
-                          <div className="flex items-center gap-3 bg-text-main/5 px-5 py-2.5 rounded-full border border-text-main/5 backdrop-blur-xl">
+                          <div className="flex items-center gap-3 bg-bg-base px-5 py-2.5 rounded-full border border-border-subtle backdrop-blur-xl">
                              <Sparkles size={14} className="text-primary animate-pulse"/>
                              <span className="text-label !text-text-main">Engine: SDID Matrix v4.1</span>
                           </div>
                         </div>
-                        <div className="flex-1 w-full bg-text-main/5 rounded-[48px] border border-text-main/5 p-10 relative z-10 backdrop-blur-3xl shadow-inner overflow-hidden group/chart">
+                        <div className="flex-1 w-full bg-bg-base rounded-[48px] border border-border-subtle p-10 relative z-10 backdrop-blur-3xl shadow-inner overflow-hidden group/chart">
                           <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover/chart:opacity-100 transition-opacity duration-1000"></div>
                           <PolicyTimelineChart 
                             timeline={activePolicy.timeline} 
@@ -335,25 +335,25 @@ const PolicyView = () => {
                           <span className="text-[9px] font-black text-primary uppercase tracking-widest">Processing Data...</span>
                        </div>
                     ) : (
-                       <div className="flex items-center gap-3 bg-text-main/5 px-5 py-2.5 rounded-full border border-text-main/5">
+                       <div className="flex items-center gap-3 bg-bg-base px-5 py-2.5 rounded-full border border-border-subtle">
                           <BarChart2 size={16} className="text-primary" />
-                          <span className="text-[9px] font-black text-text-main uppercase tracking-widest">{compareList.length}/4 Nodes Active</span>
+                          <span className="text-label !text-text-main">{compareList.length}/4 Nodes Active</span>
                        </div>
                     )}
                   </div>
 
-                  <div className="flex-1 bg-text-main/5 rounded-[48px] border border-text-main/5 p-10 relative overflow-hidden shadow-inner backdrop-blur-3xl group/comp">
+                  <div className="flex-1 bg-bg-base rounded-[48px] border border-border-subtle p-10 relative overflow-hidden shadow-inner backdrop-blur-3xl group/comp">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,226,244,0.05)_0,transparent_70%)]"></div>
                     {compareList.length > 0 ? (
                       <ComparisonChart datasets={comparisonDatasets} />
                     ) : (
                       <div className="h-full flex flex-col items-center justify-center gap-10 text-text-dim grayscale opacity-20">
-                        <div className="w-32 h-32 bg-text-main/5 rounded-[48px] flex items-center justify-center border border-text-main/5 shadow-inner">
+                        <div className="w-32 h-32 bg-bg-base rounded-[48px] flex items-center justify-center border border-border-subtle shadow-inner">
                           <Plus size={64} strokeWidth={1} />
                         </div>
                         <div className="text-center space-y-4">
-                          <p className="heading-lg !text-xl !uppercase tracking-[0.4em]">Matrix Grid Empty</p>
-                          <p className="text-lg font-serif italic max-w-sm leading-relaxed">"Select up to 4 countries from the registry to begin cross-border atmospheric benchmarking."</p>
+                          <p className="heading-lg !text-xl tracking-[0.4em]">Matrix Grid Empty</p>
+                          <p className="text-p !text-lg italic max-w-sm leading-relaxed">"Select up to 4 countries from the registry to begin cross-border atmospheric benchmarking."</p>
                         </div>
                       </div>
                     )}

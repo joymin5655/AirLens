@@ -17,7 +17,7 @@ const LocationCard = ({ city, loading, error }: LocationCardProps) => {
       className="narrative-card !p-6 !rounded-[32px] flex items-center gap-5 shadow-xl group transition-colors duration-500"
     >
       <div className="bg-primary p-4 rounded-2xl shadow-glow group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
-        <MapPin className="text-earth-brown w-6 h-6" />
+        <MapPin className="text-text-main w-6 h-6" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">

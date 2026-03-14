@@ -46,7 +46,7 @@ const PlatformHub = () => {
               >
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-text-main/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000`}></div>
 
-                <div className={`w-14 h-14 bg-text-main/5 rounded-2xl flex items-center justify-center ${link.color} mb-8 group-hover:bg-primary/20 group-hover:text-primary transition-all duration-500 shadow-inner`}>
+                <div className={`w-14 h-14 bg-text-main/10 rounded-2xl flex items-center justify-center ${link.color} mb-8 group-hover:bg-primary/20 group-hover:text-primary transition-all duration-500 shadow-inner`}>
                   {link.icon}
                 </div>
 
@@ -65,7 +65,7 @@ const PlatformHub = () => {
 
         <motion.div 
           whileHover={{ scale: 1.02 }}
-          className="bg-earth-brown text-white p-16 rounded-[64px] shadow-deep relative overflow-hidden group perspective-1000"
+          className="bg-text-main text-bg-base p-16 rounded-[64px] shadow-deep relative overflow-hidden group perspective-1000"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
           <div className="absolute top-0 right-0 p-16 opacity-5 group-hover:scale-125 group-hover:rotate-12 transition-all duration-1000">
@@ -81,19 +81,19 @@ const PlatformHub = () => {
             </div>
 
             <div className="space-y-6">
-              <h3 className="heading-lg !text-white !text-5xl">{t('LABELS.PURPOSE')}</h3>
-              <p className="text-white/50 leading-relaxed font-serif text-xl italic pr-10">
+              <h3 className="heading-lg !text-bg-base !text-5xl">{t('LABELS.PURPOSE')}</h3>
+              <p className="text-bg-base/60 leading-relaxed font-serif text-xl italic pr-10">
                 "{t('LABELS.PURPOSE_DESC') || 'Empowering citizens and policymakers with ground-truth environmental intelligence through advanced physics-ML fusion.'}"
               </p>
             </div>
 
-            <div className="flex items-center gap-6 p-8 bg-white/5 rounded-[40px] border border-white/10 backdrop-blur-2xl shadow-inner group-hover:bg-white/10 transition-colors">
-              <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-earth-brown shadow-glow">
+            <div className="flex items-center gap-6 p-8 bg-bg-base/5 rounded-[40px] border border-bg-base/10 backdrop-blur-2xl shadow-inner group-hover:bg-bg-base/10 transition-colors">
+              <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-text-main shadow-glow">
                 <Sparkles size={28} />
               </div>
               <div className="space-y-1">
-                <span className="text-[11px] font-black font-sans uppercase tracking-[0.3em] block text-white">Provenance Matrix Verified</span>
-                <span className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-bold italic">DQSS Intelligence Certificate Active</span>
+                <span className="text-[11px] font-black font-sans uppercase tracking-[0.3em] block text-bg-base">Provenance Matrix Verified</span>
+                <span className="text-[9px] text-bg-base/40 uppercase tracking-[0.2em] font-bold italic">DQSS Intelligence Certificate Active</span>
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@
 @theme {
   /* Unified Brand Colors */
   --color-primary: #25e2f4;
-  --color-primary-glow: rgba(37, 226, 244, 0.4);
+  --color-primary-glow: rgba(37, 226, 244, 0.5);
   --color-forest: #2e7d32;
   --color-earth-brown: #102122;
   --color-sage: #e8f5e9;
@@ -21,26 +21,26 @@
   --font-serif: "Crimson Pro", serif;
   --font-sans: "Inter", sans-serif;
   
-  --shadow-deep: 0 12px 48px -12px rgba(16, 33, 34, 0.12);
-  --shadow-glow: 0 0 20px var(--color-primary-glow);
+  --shadow-deep: 0 20px 50px -12px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 25px var(--color-primary-glow);
 }
 
 :root {
   --bg-base: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.7);
-  --text-main: #102122;
-  --text-dim: #64748b;
-  --border-subtle: rgba(16, 33, 34, 0.08);
-  --noise-opacity: 0.02;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --text-main: #0f172a; /* Sharper Slate 900 */
+  --text-dim: #475569;  /* Sharper Slate 600 */
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --noise-opacity: 0.015;
 }
 
 .dark {
-  --bg-base: #0a0f12;
-  --bg-card: rgba(16, 33, 34, 0.6);
-  --text-main: #f8fafc;
-  --text-dim: #94a3b8;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --noise-opacity: 0.04;
+  --bg-base: #020617;   /* Deep Slate 950 */
+  --bg-card: rgba(15, 23, 42, 0.8); /* Slate 900 with opacity */
+  --text-main: #f8fafc; /* Slate 50 */
+  --text-dim: #94a3b8;  /* Slate 400 */
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --noise-opacity: 0.03;
 }
 
 @layer base {
@@ -74,7 +74,7 @@
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   
   .narrative-card {
-    @apply bg-bg-card backdrop-blur-xl border border-white/10 dark:border-white/5 shadow-deep rounded-[40px] p-8 transition-all duration-700 hover:shadow-glow hover:bg-white/10 dark:hover:bg-white/5 hover:-translate-y-1;
+    @apply bg-bg-card backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-deep rounded-[40px] p-8 transition-all duration-500 hover:shadow-glow hover:-translate-y-1;
   }
   
   .glass-panel {
@@ -82,11 +82,11 @@
   }
 
   .glass-island {
-    @apply bg-bg-card/80 backdrop-blur-3xl border border-white/30 dark:border-white/10 rounded-full shadow-2xl;
+    @apply bg-bg-card/90 backdrop-blur-3xl border border-white/30 dark:border-white/10 rounded-full shadow-2xl;
   }
 
   .text-glow {
-    text-shadow: 0 0 10px var(--color-primary-glow);
+    text-shadow: 0 0 15px var(--color-primary-glow);
   }
 
   .bg-atmospheric {
@@ -97,9 +97,9 @@
     animation: float 6s ease-in-out infinite;
   }
 
-  /* Unified Typography */
+  /* Unified Typography - Enhanced Clarity */
   .heading-xl {
-    @apply font-sans font-black text-4xl sm:text-6xl tracking-tighter leading-[0.9] text-text-main;
+    @apply font-sans font-black text-4xl sm:text-6xl tracking-tighter leading-[0.95] text-text-main;
   }
 
   .heading-lg {
@@ -107,11 +107,11 @@
   }
 
   .text-p {
-    @apply font-sans text-sm sm:text-base leading-relaxed text-text-dim;
+    @apply font-sans text-sm sm:text-base leading-relaxed text-text-dim font-medium;
   }
 
   .text-label {
-    @apply font-sans text-[10px] font-black uppercase tracking-[0.2em] text-text-dim;
+    @apply font-sans text-[10px] font-black uppercase tracking-[0.25em] text-text-main opacity-80;
   }
 }
 

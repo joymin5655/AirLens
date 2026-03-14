@@ -57,7 +57,7 @@ const HeroProfile = () => {
   const userRole = isAdmin ? t('LABELS.INTEL_MANAGER') : t('LABELS.CITIZEN_SCIENTIST');
 
   return (
-    <section className="min-w-[100vw] h-full flex items-center justify-center snap-center px-8 md:px-24 relative overflow-hidden bg-bg-base/50 transition-colors duration-500">
+    <section className="min-w-[100vw] h-full flex items-center justify-center snap-center px-8 md:px-24 relative overflow-hidden bg-bg-base transition-colors duration-500">
       {/* Dynamic Background Elements */}
       <div className="absolute inset-0 opacity-40 pointer-events-none">
         <div className="absolute top-1/4 -left-20 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[160px] animate-float"></div>
@@ -198,7 +198,7 @@ const HeroProfile = () => {
                         <div className="space-y-2">
                            <label className="text-label ml-2">Display Name</label>
                            <input 
-                            className="w-full bg-bg-base/50 border border-text-main/5 rounded-[24px] px-8 py-4 text-sm font-black text-text-main outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all shadow-inner"
+                            className="w-full bg-bg-base border border-border-subtle rounded-[24px] px-8 py-4 text-sm font-black text-text-main outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all shadow-inner"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
                             placeholder="Your Name"
@@ -207,7 +207,7 @@ const HeroProfile = () => {
                         <div className="space-y-2">
                            <label className="text-label ml-2">Mission Statement</label>
                            <textarea 
-                            className="w-full bg-bg-base/50 border border-text-main/5 rounded-[24px] px-8 py-5 text-xs text-text-dim outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 h-32 resize-none transition-all shadow-inner font-serif italic"
+                            className="w-full bg-bg-base border border-border-subtle rounded-[24px] px-8 py-5 text-xs text-text-dim outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 h-32 resize-none transition-all shadow-inner font-serif italic"
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
                             placeholder="Tell us about your mission..."
@@ -247,7 +247,7 @@ const HeroProfile = () => {
                             <Sparkles size={12} /> {userRole}
                           </p>
                         </div>
-                        <div className="relative p-6 bg-text-main/5 rounded-[32px] border border-text-main/5">
+                        <div className="relative p-6 bg-bg-base rounded-[32px] border border-border-subtle">
                           <p className="text-[15px] text-text-dim leading-relaxed font-serif italic relative z-10">
                             "{bio || defaultBio}"
                           </p>

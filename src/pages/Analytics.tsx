@@ -32,18 +32,18 @@ const Analytics = () => {
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="inline-flex items-center gap-3 bg-white/40 backdrop-blur-xl px-5 py-2 rounded-full border border-white shadow-xl"
+            className="inline-flex items-center gap-3 bg-bg-card backdrop-blur-xl px-5 py-2 rounded-full border border-white/20 shadow-xl"
           >
             <BarChart3 className="text-primary" size={14} />
-            <span className="text-[10px] font-black text-earth-brown uppercase tracking-[0.4em] font-sans">Global Matrix v1.1</span>
+            <span className="text-label">Global Matrix v1.1</span>
           </motion.div>
-          <h1 className="text-6xl md:text-8xl font-black text-earth-brown tracking-tighter leading-none">
+          <h1 className="heading-xl">
             Atmospheric <br/><span className="text-primary italic font-serif font-light">Intelligence</span>
           </h1>
         </div>
         <div className="max-w-md space-y-4">
            <div className="h-1 w-20 bg-primary mx-auto md:ml-0 rounded-full"></div>
-           <p className="text-clay text-lg font-serif italic leading-relaxed">
+           <p className="text-p italic">
             "Fusing causal inference with real-time sensing to reveal the Pure State of our planet's atmosphere across 66 regional nodes."
            </p>
         </div>
@@ -58,24 +58,24 @@ const Analytics = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             whileHover={{ y: -8 }}
-            className="narrative-card group !bg-white/40 !backdrop-blur-3xl !border-white/40 shadow-2xl !p-12 relative overflow-hidden"
+            className="narrative-card group bg-bg-card backdrop-blur-3xl border-white/20 shadow-2xl !p-12 relative overflow-hidden"
           >
-            <div className={`absolute -top-10 -right-10 w-40 h-40 bg-earth-brown/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000`}></div>
+            <div className={`absolute -top-10 -right-10 w-40 h-40 bg-bg-base rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000`}></div>
             
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-clay mb-4 flex items-center gap-2">
+            <p className="text-label !text-text-dim mb-4 flex items-center gap-2">
                <span className={`w-1.5 h-1.5 rounded-full ${stat.color} animate-pulse`}></span>
                {stat.label}
             </p>
             <div className="flex items-baseline gap-3 relative z-10">
-              <h2 className="text-6xl font-black text-earth-brown tracking-tighter leading-none">{stat.value}</h2>
-              <span className="text-lg font-bold text-clay uppercase tracking-widest">{stat.unit}</span>
+              <h2 className="heading-xl">{stat.value}</h2>
+              <span className="text-label !text-text-dim">{stat.unit}</span>
             </div>
             <div className="mt-8 flex items-center gap-3 relative z-10">
-              <div className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg ${stat.trend < 0 || stat.status === 'improving' ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-primary text-earth-brown shadow-primary/20'}`}>
+              <div className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg ${stat.trend < 0 || stat.status === 'improving' ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-primary text-text-main shadow-primary/20'}`}>
                 {stat.trend > 0 ? <ArrowUpRight size={14}/> : <ArrowDownRight size={14}/>}
                 {Math.abs(stat.trend)}% {stat.status === 'improving' ? 'Gain' : 'Drift'}
               </div>
-              <span className="text-[9px] text-clay/40 font-black uppercase tracking-widest leading-none">Seasonal Adjust</span>
+              <span className="text-label !text-text-dim/40 leading-none">Seasonal Adjust</span>
             </div>
           </motion.div>
         ))}
@@ -84,45 +84,45 @@ const Analytics = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Main Ranking Table */}
         <div className="lg:col-span-8 space-y-8">
-          <div className="narrative-card !bg-white/40 !backdrop-blur-3xl !border-white/40 shadow-2xl !p-0 overflow-hidden !rounded-[56px]">
+          <div className="narrative-card bg-bg-card backdrop-blur-3xl border-white/20 shadow-2xl !p-0 overflow-hidden !rounded-[56px]">
             <div className="p-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
               <div className="space-y-1">
-                 <h3 className="text-2xl font-black text-earth-brown tracking-tighter flex items-center gap-4">
+                 <h3 className="heading-lg flex items-center gap-4">
                   <TrendingUp className="text-primary" size={28} /> Policy Effectiveness Ranking
                 </h3>
-                <p className="text-[10px] text-clay font-black uppercase tracking-[0.3em] ml-11">Cross-Border Benchmark Matrix</p>
+                <p className="text-label !text-text-dim ml-11">Cross-Border Benchmark Matrix</p>
               </div>
               <div className="flex gap-3 ml-11 sm:ml-0">
-                <button className="p-3 bg-white/50 text-earth-brown rounded-2xl hover:bg-primary hover:text-earth-brown transition-all border border-earth-brown/5 shadow-inner"><Filter size={20} /></button>
-                <button className="p-3 bg-white/50 text-earth-brown rounded-2xl hover:bg-primary hover:text-earth-brown transition-all border border-earth-brown/5 shadow-inner"><Download size={20} /></button>
+                <button className="p-3 bg-bg-card text-text-main rounded-2xl hover:bg-primary hover:text-text-main transition-all border border-border-subtle shadow-inner"><Filter size={20} /></button>
+                <button className="p-3 bg-bg-card text-text-main rounded-2xl hover:bg-primary hover:text-text-main transition-all border border-border-subtle shadow-inner"><Download size={20} /></button>
               </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-earth-brown/5 text-[10px] font-black uppercase tracking-[0.3em] text-clay">
+                  <tr className="bg-bg-base text-label !text-text-dim">
                     <th className="px-10 py-6">Index</th>
                     <th className="px-10 py-6">Node / Region</th>
                     <th className="px-10 py-6">Score</th>
                     <th className="px-10 py-6">Confidence</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-earth-brown/5">
+                <tbody className="divide-y divide-border-subtle">
                   {countries.slice(0, 8).map((c, i) => (
                     <tr key={c.countryCode} className="hover:bg-primary/10 transition-colors group cursor-pointer">
-                      <td className="px-10 py-8 text-sm font-black text-clay group-hover:text-primary">#{(i + 1).toString().padStart(2, '0')}</td>
+                      <td className="px-10 py-8 text-p !text-text-dim group-hover:text-primary">#{(i + 1).toString().padStart(2, '0')}</td>
                       <td className="px-10 py-8">
                         <div className="flex items-center gap-5">
                           <span className="text-3xl filter grayscale group-hover:grayscale-0 transition-all">{c.flag}</span>
                           <div>
-                            <p className="text-lg font-black text-earth-brown leading-tight tracking-tight group-hover:text-primary transition-colors">{c.country}</p>
-                            <p className="text-[10px] text-clay uppercase tracking-[0.2em] font-black opacity-60">{c.region}</p>
+                            <p className="text-p !text-text-main !font-black !text-lg leading-tight tracking-tight group-hover:text-primary transition-colors">{c.country}</p>
+                            <p className="text-label !text-text-dim/60 font-black">{c.region}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-10 py-8">
                         <div className="flex items-center gap-6 min-w-[180px]">
-                          <div className="flex-1 h-2 bg-earth-brown/5 rounded-full overflow-hidden shadow-inner">
+                          <div className="flex-1 h-2 bg-bg-base rounded-full overflow-hidden shadow-inner">
                             <motion.div 
                               initial={{ width: 0 }}
                               animate={{ width: `${85 - i * 4}%` }}
@@ -130,13 +130,13 @@ const Analytics = () => {
                               className="h-full bg-primary shadow-[0_0_12px_rgba(37,226,244,0.5)] rounded-full"
                             />
                           </div>
-                          <span className="text-sm font-black text-earth-brown">{85 - i * 4}.2</span>
+                          <span className="text-p !text-text-main font-black">{85 - i * 4}.2</span>
                         </div>
                       </td>
                       <td className="px-10 py-8">
                         <div className="flex items-center gap-2.5 text-primary">
                           <ShieldCheck size={16} className="animate-pulse" />
-                          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verified</span>
+                          <span className="text-label">Verified</span>
                         </div>
                       </td>
                     </tr>
@@ -144,8 +144,8 @@ const Analytics = () => {
                 </tbody>
               </table>
             </div>
-            <div className="p-8 bg-earth-brown/5 text-center">
-               <button className="text-[10px] font-black uppercase tracking-[0.4em] text-clay hover:text-primary transition-colors">Expand Full Registry Matrix</button>
+            <div className="p-8 bg-bg-base text-center">
+               <button className="text-label !text-text-dim hover:text-primary transition-colors">Expand Full Registry Matrix</button>
             </div>
           </div>
         </div>
@@ -182,10 +182,10 @@ const Analytics = () => {
 
           <motion.div 
             whileHover={{ y: -5 }}
-            className="narrative-card !bg-white/40 !backdrop-blur-3xl !border-white/40 p-12 !rounded-[56px] space-y-8 shadow-2xl relative overflow-hidden"
+            className="narrative-card bg-bg-card backdrop-blur-3xl border-white/20 p-12 !rounded-[56px] space-y-8 shadow-2xl relative overflow-hidden"
           >
              <div className="flex items-center justify-between pb-4">
-                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-clay">Regional High-Performers</h4>
+                <h4 className="text-label !text-text-dim">Regional High-Performers</h4>
                 <Globe size={16} className="text-primary opacity-40"/>
              </div>
              <div className="space-y-6">
@@ -194,17 +194,17 @@ const Analytics = () => {
                  { region: 'East Asia', score: 78.1, trend: 4.5, color: 'bg-emerald-500' },
                  { region: 'North America', score: 81.6, trend: -0.8, color: 'bg-orange-500' }
                ].map((r, i) => (
-                 <div key={i} className="flex items-center justify-between p-6 bg-white/50 rounded-[32px] border border-earth-brown/5 shadow-sm group hover:border-primary/30 transition-all duration-500">
+                 <div key={i} className="flex items-center justify-between p-6 bg-bg-card rounded-[32px] border border-border-subtle shadow-sm group hover:border-primary/30 transition-all duration-500">
                    <div className="space-y-1">
-                     <p className="text-sm font-black text-earth-brown tracking-tight">{r.region}</p>
-                     <p className="text-[9px] text-clay font-black uppercase tracking-widest opacity-60">Matrix Index Score</p>
+                     <p className="text-p !text-text-main font-black tracking-tight">{r.region}</p>
+                     <p className="text-label !text-text-dim/60 font-black">Matrix Index Score</p>
                    </div>
                    <div className="text-right flex flex-col items-end">
                      <div className="flex items-center gap-2">
                         <div className={`w-1.5 h-1.5 rounded-full ${r.color}`}></div>
-                        <p className="text-xl font-black text-earth-brown tracking-tighter">{r.score}</p>
+                        <p className="heading-lg !text-xl">{r.score}</p>
                      </div>
-                     <div className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter mt-1 ${r.trend > 0 ? 'text-emerald-500' : 'text-red-400'}`}>
+                     <div className={`flex items-center gap-1 text-label !text-text-dim/40 !tracking-tighter mt-1 ${r.trend > 0 ? 'text-emerald-500' : 'text-red-400'}`}>
                        {r.trend > 0 ? <ArrowUpRight size={10}/> : <ArrowDownRight size={10}/>}
                        {Math.abs(r.trend)}%
                      </div>
@@ -214,7 +214,7 @@ const Analytics = () => {
              </div>
              <div className="pt-4 flex items-center justify-center gap-3">
                 <Zap size={14} className="text-primary animate-pulse"/>
-                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-clay/40 text-center leading-none">Decentralized Sensing Active</p>
+                <p className="text-label !text-text-dim/40 text-center">Decentralized Sensing Active</p>
              </div>
           </motion.div>
         </div>

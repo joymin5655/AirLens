@@ -65,11 +65,11 @@ const Auth = () => {
         <div className="hidden lg:flex flex-col gap-8 pr-12">
           <div className="space-y-4">
             <span className="bg-forest/10 text-forest text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">v1.0 Citizen Science</span>
-            <h1 className="text-5xl font-bold text-earth-brown leading-tight">
+            <h1 className="heading-xl">
               {t('AUTH.TITLE_A')} <br/>
               <span className="text-forest italic">{t('AUTH.TITLE_B')}</span>
             </h1>
-            <p className="text-clay text-lg font-serif">{t('AUTH.SUBTITLE')}</p>
+            <p className="text-text-dim text-lg font-serif">{t('AUTH.SUBTITLE')}</p>
           </div>
 
           <div className="space-y-6">
@@ -79,10 +79,10 @@ const Auth = () => {
               { icon: <Zap size={20}/>, title: t('AUTH.INSIGHTS_TITLE'), desc: t('AUTH.INSIGHTS_DESC') },
             ].map((feature, i) => (
               <div key={i} className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-xl shadow-sm text-forest">{feature.icon}</div>
+                <div className="bg-bg-card p-2 rounded-xl shadow-sm text-forest">{feature.icon}</div>
                 <div>
-                  <h4 className="text-sm font-bold text-earth-brown">{feature.title}</h4>
-                  <p className="text-xs text-clay leading-relaxed">{feature.desc}</p>
+                  <h4 className="text-sm font-bold text-text-main">{feature.title}</h4>
+                  <p className="text-xs text-text-dim leading-relaxed">{feature.desc}</p>
                 </div>
               </div>
             ))}
@@ -90,7 +90,7 @@ const Auth = () => {
         </div>
 
         {/* Right Side: Auth Card */}
-        <div className="bg-white rounded-[40px] border border-earth-brown/5 p-8 md:p-12 shadow-2xl relative overflow-hidden w-full max-w-md mx-auto">
+        <div className="bg-bg-card rounded-[40px] border border-text-main/5 p-8 md:p-12 shadow-2xl relative overflow-hidden w-full max-w-md mx-auto">
           <div className="absolute top-0 right-0 w-32 h-32 bg-forest/5 blur-3xl rounded-full"></div>
           
           <div className="relative z-10 flex flex-col gap-8">
@@ -101,23 +101,23 @@ const Auth = () => {
               ></div>
               <button 
                 onClick={() => setIsLogin(true)}
-                className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-widest relative z-10 transition-colors ${isLogin ? 'text-forest' : 'text-clay hover:text-earth-brown'}`}
+                className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-widest relative z-10 transition-colors ${isLogin ? 'text-forest' : 'text-text-dim hover:text-text-main'}`}
               >
                 {t('AUTH.SIGN_IN')}
               </button>
               <button 
                 onClick={() => setIsLogin(false)}
-                className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-widest relative z-10 transition-colors ${!isLogin ? 'text-forest' : 'text-clay hover:text-earth-brown'}`}
+                className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-widest relative z-10 transition-colors ${!isLogin ? 'text-forest' : 'text-text-dim hover:text-text-main'}`}
               >
                 {t('AUTH.SIGN_UP')}
               </button>
             </div>
 
             <div className="text-center space-y-1">
-              <h2 className="text-2xl font-bold text-earth-brown tracking-tight font-sans">
+              <h2 className="heading-lg !text-2xl font-sans">
                 {isLogin ? t('AUTH.WELCOME_BACK') : t('AUTH.CREATE_ACCOUNT')}
               </h2>
-              <p className="text-clay text-[10px] font-bold uppercase tracking-[0.2em] font-sans">
+              <p className="text-text-dim text-[10px] font-bold uppercase tracking-[0.2em] font-sans">
                 {isLogin ? 'Log in to your workspace' : 'Join the global sensing network'}
               </p>
             </div>
@@ -128,8 +128,8 @@ const Auth = () => {
                   <CheckCircle2 size={48} className="text-forest" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-bold text-earth-brown">{t('AUTH.VERIFICATION_SENT')}</h3>
-                  <p className="text-xs text-clay leading-relaxed">
+                  <h3 className="text-lg font-bold text-text-main">{t('AUTH.VERIFICATION_SENT')}</h3>
+                  <p className="text-xs text-text-dim leading-relaxed">
                     <strong>{email}</strong>{t('AUTH.VERIFICATION_DESC')}
                   </p>
                 </div>
@@ -146,7 +146,7 @@ const Auth = () => {
                 <div className="flex flex-col gap-3">
                   <button 
                     onClick={() => handleSocialLogin('google')}
-                    className="w-full flex items-center justify-center gap-3 py-3.5 bg-white border border-earth-brown/10 rounded-2xl hover:bg-sage/10 transition-all text-xs font-bold text-earth-brown shadow-sm group font-sans"
+                    className="w-full flex items-center justify-center gap-3 py-3.5 bg-bg-card border border-text-main/10 rounded-2xl hover:bg-sage/10 transition-all text-xs font-bold text-text-main shadow-sm group font-sans"
                   >
                     <div className="bg-white p-1 rounded-md border border-gray-100 group-hover:scale-110 transition-transform">
                       <Chrome size={16} className="text-[#4285F4]" />
@@ -156,21 +156,21 @@ const Auth = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="flex-1 h-px bg-earth-brown/5"></div>
-                  <span className="text-[9px] font-black text-clay/40 uppercase tracking-widest">Or use email</span>
-                  <div className="flex-1 h-px bg-earth-brown/5"></div>
+                  <div className="flex-1 h-px bg-text-main/5"></div>
+                  <span className="text-[9px] font-black text-text-dim/40 uppercase tracking-widest">Or use email</span>
+                  <div className="flex-1 h-px bg-text-main/5"></div>
                 </div>
 
                 <form onSubmit={handleAuth} className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-bold text-clay uppercase tracking-widest ml-1 font-sans">Email Address</label>
+                    <label className="text-[10px] font-bold text-text-dim uppercase tracking-widest ml-1 font-sans">Email Address</label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-clay/40 w-4 h-4" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dim/40 w-4 h-4" />
                       <input 
                         type="email" 
                         required
                         placeholder="name@example.com"
-                        className="w-full pl-12 pr-4 py-3.5 bg-sage/5 border border-earth-brown/5 rounded-2xl text-sm focus:ring-2 focus:ring-forest/30 text-earth-brown transition-all font-sans outline-none"
+                        className="w-full pl-12 pr-4 py-3.5 bg-sage/5 border border-text-main/5 rounded-2xl text-sm focus:ring-2 focus:ring-forest/30 text-text-main transition-all font-sans outline-none"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
@@ -178,14 +178,14 @@ const Auth = () => {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-bold text-clay uppercase tracking-widest ml-1 font-sans">Password</label>
+                    <label className="text-[10px] font-bold text-text-dim uppercase tracking-widest ml-1 font-sans">Password</label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-clay/40 w-4 h-4" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dim/40 w-4 h-4" />
                       <input 
                         type="password" 
                         required
                         placeholder="••••••••"
-                        className="w-full pl-12 pr-4 py-3.5 bg-sage/5 border border-earth-brown/5 rounded-2xl text-sm focus:ring-2 focus:ring-forest/30 text-earth-brown transition-all font-sans outline-none"
+                        className="w-full pl-12 pr-4 py-3.5 bg-sage/5 border border-text-main/5 rounded-2xl text-sm focus:ring-2 focus:ring-forest/30 text-text-main transition-all font-sans outline-none"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
