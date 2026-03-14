@@ -2,7 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../logic/useAuthStore';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, isAnonymous, loading } = useAuthStore();
+  const { user, loading } = useAuthStore();
   const location = useLocation();
 
   if (loading) {
@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!user || isAnonymous) {
+  if (!user) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 

@@ -36,7 +36,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const notifsRef = useRef<HTMLDivElement>(null);
-  const { user, isAdmin, isAnonymous, loading, signOut } = useAuthStore();
+  const { user, isAdmin, loading, signOut } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
 
   const unreadCount = notifs.filter(n => !n.read).length;
@@ -204,7 +204,7 @@ const Navbar = () => {
 
           {loading ? (
             <div className="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin"></div>
-          ) : user && !isAnonymous ? (
+          ) : user ? (
             <div className="relative group flex items-center gap-3 cursor-pointer">
               <div className="flex flex-col items-end hidden sm:flex">
                 <span className={`text-[9px] font-black uppercase tracking-widest ${isGlobe && !scrolled ? 'text-white' : 'text-text-main'}`}>

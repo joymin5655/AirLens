@@ -33,21 +33,19 @@ function App() {
   
   const setUser = useAuthStore((state) => state.setUser);
   const setLoading = useAuthStore((state) => state.setLoading);
-  const signInAnonymously = useAuthStore((state) => state.signInAnonymously);
   const theme = useThemeStore((state) => state.theme);
 
   useEffect(() => {
-    // 0. Initialize Theme
     applyTheme(theme);
 
-    // 1. Initial Session Check — no session → anonymous login
+    // 1. Initial session check
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
           setUser(session.user);
         } else {
-          await signInAnonymously();
+          setLoading(false);
         }
       } catch (err) {
         console.error('Initial Auth Error:', err);
@@ -56,16 +54,14 @@ function App() {
     };
     initAuth();
 
-    // 2. Continuous State Listener
+    // 2. Continuous state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-      }
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [setUser, setLoading, signInAnonymously, theme]);
+  }, [setUser, setLoading, theme]);
 
   return (
     <Suspense fallback={<PageLoader />}>
@@ -74,14 +70,16 @@ function App() {
         <main className={`flex-1 ${isGlobe ? '' : 'pt-20'}`}>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
-              <Route path="/globe" element={<PageTransition><GlobeView /></PageTransition>} />
-              <Route path="/policy" element={<PageTransition><PolicyView /></PageTransition>} />
-              <Route path="/analytics" element={<PageTransition><Analytics /></PageTransition>} />
-              <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
-              <Route path="/camera" element={<PageTransition><CameraAI /></PageTransition>} />
-              <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+              {/* Public routes */}
+              <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
               <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+              <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+              <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+              {/* Protected routes — require login */}
+              <Route path="/globe" element={<ProtectedRoute><PageTransition><GlobeView /></PageTransition></ProtectedRoute>} />
+              <Route path="/policy" element={<ProtectedRoute><PageTransition><PolicyView /></PageTransition></ProtectedRoute>} />
+              <Route path="/analytics" element={<ProtectedRoute><PageTransition><Analytics /></PageTransition></ProtectedRoute>} />
+              <Route path="/camera" element={<ProtectedRoute><PageTransition><CameraAI /></PageTransition></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><PageTransition><Profile /></PageTransition></ProtectedRoute>} />
               <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
             </Routes>

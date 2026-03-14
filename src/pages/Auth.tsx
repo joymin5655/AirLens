@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../logic/supabase';
 import { useAuthStore } from '../logic/useAuthStore';
-import { Mail, Lock, LogIn, UserPlus, Chrome, AlertCircle, CheckCircle2, ShieldCheck, Zap, Database, Sparkles } from 'lucide-react';
+import { Mail, Lock, LogIn, UserPlus, Chrome, AlertCircle, CheckCircle2, ShieldCheck, Zap, Database } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Auth = () => {
@@ -14,17 +14,16 @@ const Auth = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { user, isAnonymous, setUser } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
-  // Redirect only if already a full (non-anonymous) account
   useEffect(() => {
-    if (user && !isAnonymous) {
+    if (user) {
       navigate(from, { replace: true });
     }
-  }, [user, isAnonymous, navigate, from]);
+  }, [user, navigate, from]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,20 +40,13 @@ const Auth = () => {
           navigate(from, { replace: true });
         }
       } else {
-        // If anonymous user → link email to existing anonymous account
-        if (user?.is_anonymous) {
-          const { error } = await supabase.auth.updateUser({ email, password });
-          if (error) throw error;
-          setSuccess(true);
-        } else {
-          const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { data: { full_name: email.split('@')[0] } }
-          });
-          if (error) throw error;
-          setSuccess(true);
-        }
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { full_name: email.split('@')[0] } }
+        });
+        if (error) throw error;
+        setSuccess(true);
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
@@ -64,23 +56,14 @@ const Auth = () => {
   };
 
   const handleSocialLogin = async (provider: 'google' | 'github') => {
+    setError(null);
     try {
       const redirectTo = window.location.origin + import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
-
-      // Anonymous user → link OAuth identity to existing account
-      if (user?.is_anonymous) {
-        const { error } = await supabase.auth.linkIdentity({
-          provider,
-          options: { redirectTo }
-        });
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider,
-          options: { redirectTo }
-        });
-        if (error) throw error;
-      }
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo }
+      });
+      if (error) throw error;
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
     }
@@ -88,17 +71,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-24 flex flex-col items-center px-4 bg-bg-base transition-colors duration-500">
-      {/* Anonymous upgrade banner */}
-      {user?.is_anonymous && (
-        <div className="mb-8 max-w-md w-full flex items-start gap-3 bg-primary/10 border border-primary/20 rounded-2xl px-5 py-4">
-          <Sparkles size={16} className="text-primary shrink-0 mt-0.5" />
-          <p className="text-[11px] font-bold text-text-main leading-relaxed">
-            현재 <span className="text-primary">임시 계정</span>으로 이용 중입니다. 이메일 또는 Google로 가입하면 데이터가 영구 보존됩니다.
-          </p>
-        </div>
-      )}
-
-      <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         {/* Left Side: Value Proposition */}
         <div className="hidden lg:flex flex-col gap-8 pr-12">
