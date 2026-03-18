@@ -154,6 +154,12 @@ Deno.serve(async (req: Request) => {
       return new Response('Missing user_id in metadata', { status: 422 })
     }
 
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!UUID_RE.test(userId)) {
+      console.error('polar-webhook: invalid user_id format', userId)
+      return new Response('Invalid user_id format', { status: 422 })
+    }
+
     const plan = PRODUCT_PLAN_MAP[productId]
     if (!plan) {
       console.warn(`polar-webhook: unknown productId received: ${productId}`)
@@ -174,7 +180,8 @@ Deno.serve(async (req: Request) => {
   } else if (type === 'subscription.canceled' || type === 'subscription.revoked') {
     const userId = (data?.metadata as Record<string, string> | undefined)?.user_id
 
-    if (userId) {
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (userId && UUID_RE.test(userId)) {
       await supabaseAdmin
         .from('profiles')
         .update({ plan: 'Free' })

@@ -163,10 +163,10 @@ export async function analyzeCameraImage(
   lat?: number,
   lon?: number,
 ): Promise<MLCameraResult | null> {
-  // Server-side quota check (non-blocking on service failure)
+  // Server-side quota check (fail-closed: service error also blocks the call)
   const usage = await checkUsage('camera_calls');
-  if (usage && !usage.allowed) {
-    throw new Error(usage.message ?? '이번 달 Camera AI 사용 한도를 초과했습니다.');
+  if (!usage || !usage.allowed) {
+    throw new Error(usage?.message ?? '이번 달 Camera AI 사용 한도를 초과했습니다.');
   }
 
   const fd = new FormData();

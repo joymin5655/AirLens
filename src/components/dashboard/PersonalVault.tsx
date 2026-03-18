@@ -109,8 +109,8 @@ const PersonalVault = () => {
               >
                 <div className="h-64 bg-text-main/5 relative overflow-hidden">
                   {cap.signed_url ? (
-                    <img 
-                      src={cap.signed_url as string} 
+                    <img
+                      src={String(cap.signed_url)}
                       alt="Capture" 
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
@@ -132,19 +132,19 @@ const PersonalVault = () => {
                     <div className="space-y-1">
                        <div className="flex items-center gap-2 text-primary">
                           <MapPin size={12} />
-                          <p className="text-label !text-primary/60">Location Node</p>
+                          <p className="text-label !text-primary">Location Node</p>
                        </div>
                        <p className="heading-lg !text-xl group-hover:text-primary transition-colors">{(cap.city_name as string) || 'Ungauged Region'}</p>
                     </div>
                     <div className="text-right">
-                       <p className="text-label !text-text-dim/60">{new Date(cap.created_at as string).toLocaleDateString()}</p>
-                       <p className="text-[9px] text-primary font-bold uppercase tracking-tighter mt-1">Matrix v1.1</p>
+                       <p className="text-label !text-text-dim">{new Date(cap.created_at as string).toLocaleDateString()}</p>
+                       <p className="text-[10px] text-primary font-bold uppercase tracking-tighter mt-1">Matrix v1.1</p>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between group/row">
                     <div className="space-y-1">
-                       <p className="text-label !text-text-dim/80">Atmospheric Grading</p>
+                       <p className="text-label !text-text-dim">Atmospheric Grading</p>
                        <p className="heading-lg !text-2xl italic group-hover:text-primary transition-colors">{(cap.aqi_class as string) || 'Inference Active'}</p>
                     </div>
                     <div className="w-12 h-12 rounded-2xl bg-text-main/10 flex items-center justify-center text-text-main group-hover:bg-primary group-hover:text-black transition-all duration-700 shadow-sm border border-text-main/10 group-hover:rotate-12">
@@ -167,7 +167,7 @@ const PersonalVault = () => {
             </div>
             <div className="space-y-4">
               <h4 className="heading-lg !text-4xl">{t('DASHBOARD.NO_CAPTURES')}</h4>
-              <p className="text-p italic max-w-sm mx-auto opacity-60 leading-relaxed">"{t('DASHBOARD.EMPTY_VAULT')}"</p>
+              <p className="text-p max-w-sm mx-auto leading-relaxed">{t('DASHBOARD.EMPTY_VAULT')}</p>
             </div>
             <Link to="/camera" className="bg-text-main text-bg-base px-14 py-6 rounded-full text-label shadow-deep hover:scale-110 hover:shadow-primary/20 transition-all flex items-center gap-4 group">
               Start Atmospheric Sensing <ChevronRight size={22} className="text-primary group-hover:translate-x-1 transition-transform" />

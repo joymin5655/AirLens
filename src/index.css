@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Unified Brand Colors */
   --color-primary: #25e2f4;
@@ -29,43 +31,32 @@
   
   --shadow-deep: 0 20px 50px -12px rgba(0, 0, 0, 0.25);
   --shadow-glow: 0 0 25px var(--color-primary-glow);
+  
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 :root {
-  --bg-base: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --text-main: #0f172a;
-  --text-dim: #475569;
-  --border-subtle: rgba(15, 23, 42, 0.1);
-  --noise-opacity: 0.015;
-  
-  /* Buttons Light */
-  --btn-main-bg: #0f172a; /* Dark for Light mode */
-  --btn-main-text: #f8fafc;
-  --btn-alt-bg: rgba(15, 23, 42, 0.05);
-  --btn-alt-text: #0f172a;
-}
-
-.dark {
   --bg-base: #020617;
-  --bg-card: rgba(15, 23, 42, 0.95);
+  --bg-card: rgba(15, 23, 42, 0.85);
   --text-main: #f8fafc;
   --text-dim: #cbd5e1;
-  --border-subtle: rgba(255, 255, 255, 0.15);
+  --border-subtle: rgba(255, 255, 255, 0.1);
   --noise-opacity: 0.02;
-  
-  /* Buttons Dark */
-  --btn-main-bg: #f8fafc; /* Light for Dark mode */
+
+  --btn-main-bg: #f8fafc;
   --btn-main-text: #020617;
-  --btn-alt-bg: rgba(255, 255, 255, 0.1);
+  --btn-alt-bg: rgba(255, 255, 255, 0.08);
   --btn-alt-text: #f8fafc;
 }
 
 @layer base {
   body {
     background-color: var(--color-bg-base);
-    background-image: radial-gradient(circle at 2px 2px, var(--border-subtle) 1px, transparent 0);
-    background-size: 48px 48px;
+    background-image: 
+      radial-gradient(circle at 2px 2px, var(--border-subtle) 1px, transparent 0),
+      radial-gradient(circle at 50% 50%, rgba(37, 226, 244, 0.03) 0%, transparent 50%);
+    background-size: 48px 48px, 100% 100%;
     @apply font-sans text-text-main antialiased selection:bg-primary/30 overflow-x-hidden transition-colors duration-500;
   }
 
@@ -92,32 +83,37 @@
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   
   .narrative-card {
-    @apply bg-bg-card backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-deep rounded-[40px] p-8 transition-all duration-500 hover:shadow-glow hover:-translate-y-1;
+    @apply bg-bg-card backdrop-blur-3xl border border-white/20 dark:border-white/5 shadow-deep rounded-[48px] p-8 transition-all duration-700 hover:shadow-glow hover:-translate-y-2 relative overflow-hidden;
+  }
+  
+  .narrative-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 transition-opacity duration-700 pointer-events-none;
+  }
+  
+  .narrative-card:hover::before {
+    @apply opacity-100;
   }
   
   .glass-panel {
-    @apply bg-bg-card backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-3xl shadow-sm;
+    @apply bg-bg-card backdrop-blur-2xl border border-white/20 dark:border-white/5 rounded-[32px] shadow-sm;
   }
 
   .glass-island {
-    @apply bg-bg-card/95 backdrop-blur-3xl border border-white/30 dark:border-white/10 rounded-full shadow-2xl;
+    @apply bg-bg-card/90 backdrop-blur-3xl border border-white/30 dark:border-white/10 rounded-full shadow-2xl;
   }
 
   .text-glow {
-    text-shadow: 0 0 15px var(--color-primary-glow);
+    text-shadow: 0 0 20px var(--color-primary-glow);
   }
 
   .bg-atmospheric {
     background: linear-gradient(135deg, var(--bg-base) 0%, var(--border-subtle) 100%);
   }
 
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  /* Unified Typography - Maximum Clarity */
+  /* Unified Typography */
   .heading-xl {
-    @apply font-sans font-black text-4xl sm:text-6xl tracking-tighter leading-[0.95] text-text-main;
+    @apply font-sans font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-[0.9] text-text-main;
   }
 
   .heading-lg {
@@ -129,25 +125,25 @@
   }
 
   .text-label {
-    @apply font-sans text-[10px] font-black uppercase tracking-[0.25em] text-text-main;
+    @apply font-sans text-[10px] font-black uppercase tracking-[0.3em] text-text-main;
   }
 
   /* Semantic Buttons */
   .btn-primary {
-    @apply bg-primary text-black font-black uppercase tracking-widest text-[10px] sm:text-xs px-8 py-4 rounded-2xl shadow-deep hover:scale-[1.03] active:scale-95 transition-all duration-300 shadow-primary/20;
+    @apply bg-primary text-black font-black uppercase tracking-widest text-[10px] sm:text-xs px-10 py-5 rounded-[24px] shadow-deep hover:scale-[1.05] active:scale-95 transition-all duration-500 shadow-primary/20;
   }
 
   .btn-main {
-    @apply bg-btn-main-bg text-btn-main-text font-black uppercase tracking-widest text-[10px] sm:text-xs px-8 py-4 rounded-2xl shadow-deep hover:scale-[1.03] active:scale-95 transition-all duration-500;
+    @apply bg-btn-main-bg text-btn-main-text font-black uppercase tracking-widest text-[10px] sm:text-xs px-10 py-5 rounded-[24px] shadow-deep hover:scale-[1.05] active:scale-95 transition-all duration-500;
   }
 
   .btn-alt {
-    @apply bg-btn-alt-bg text-btn-alt-text font-black uppercase tracking-widest text-[10px] sm:text-xs px-8 py-4 rounded-2xl hover:bg-primary hover:text-black hover:scale-[1.03] active:scale-95 transition-all duration-500 border border-border-subtle;
+    @apply bg-btn-alt-bg text-btn-alt-text font-black uppercase tracking-widest text-[10px] sm:text-xs px-10 py-5 rounded-[24px] hover:bg-primary hover:text-black hover:scale-[1.05] active:scale-95 transition-all duration-500 border border-border-subtle shadow-sm;
   }
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
 }

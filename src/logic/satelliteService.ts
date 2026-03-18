@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { supabase } from './supabase';
 import { APP_CONFIG } from './config';
+import { predictPM25 } from './mlService';
 
 /**
  * AirLens Satellite & Physics Intelligence Service
@@ -28,8 +29,7 @@ export const fetchMaiacAodFromEdge = async (lat: number, lon: number): Promise<A
     return {
       aod: Math.round(data.aod_value * 100) / 100,
       confidence: data.confidence,
-      source: `NASA MAIAC (Direct Edge) - ${data.granule_id.split('/').pop()}`,
-      granule_id: data.granule_id
+      source: `NASA POWER TOTEXTTAU (MERRA-2)`,
     };
   } catch (err) {
     console.warn('Edge Function MAIAC Fetch Error, falling back to NASA POWER:', err);
@@ -45,16 +45,13 @@ export const fetchMaiacAodFromEdge = async (lat: number, lon: number): Promise<A
  */
 export const fetchNasaAod = async (lat: number, lon: number): Promise<AODResponse> => {
   try {
-    // NASA POWER REST API (Public, no token required for basic queries)
-    // Parameter: ALLSKY_SFC_SW_DWN (often used as proxy for atmospheric clarity)
-    // Here we use a more direct AOD proxy if available, or fallback to historical samples.
-    
     const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    
-    // Attempt to get daily meteorological parameters
+
+    // NASA POWER: TOTEXTTAU = MERRA-2 total aerosol optical depth (550nm proxy)
+    // CLRSKY/ALLSKY used to derive transmittance-based confidence
     const response = await axios.get('https://power.larc.nasa.gov/api/temporal/daily/point', {
       params: {
-        parameters: 'ALLSKY_SFC_SW_DWN,RH2M',
+        parameters: 'TOTEXTTAU,CLRSKY_SFC_SW_DWN,ALLSKY_SFC_SW_DWN',
         community: 'AG',
         longitude: lon,
         latitude: lat,
@@ -62,31 +59,34 @@ export const fetchNasaAod = async (lat: number, lon: number): Promise<AODRespons
         end: today,
         format: 'JSON'
       },
-      timeout: 5000
+      timeout: 6000
     });
 
-    const data = response.data.properties.parameter;
-    const solarDown = Object.values(data.ALLSKY_SFC_SW_DWN)[0] as number;
-    
-    // Physics-Informed AOD Estimation (Simplified for Frontend)
-    // If solar radiation is lower than expected clear-sky, we estimate AOD
-    const expectedClearSky = 25; // Variable based on lat/lon/season
-    const attenuation = Math.max(0, expectedClearSky - solarDown);
-    const estimatedAod = 0.1 + (attenuation / 50);
+    const params = response.data.properties.parameter;
+    const aod = Object.values(params.TOTEXTTAU)[0] as number;
+    const clrSky = Object.values(params.CLRSKY_SFC_SW_DWN)[0] as number;
+    const allSky = Object.values(params.ALLSKY_SFC_SW_DWN)[0] as number;
+
+    if (aod == null || aod === -999) throw new Error('No TOTEXTTAU data');
+
+    // Dynamic expectedClearSky from actual CLRSKY measurement
+    const transmittance = clrSky > 0 ? Math.min(1, allSky / clrSky) : 0.7;
+    const confidence = Math.round(transmittance * 85 + 10);
 
     return {
-      aod: Math.round(estimatedAod * 100) / 100,
-      confidence: 75,
-      source: 'NASA POWER / MAIAC Proxy'
+      aod: Math.max(0, Math.round(aod * 100) / 100),
+      confidence,
+      source: 'NASA POWER TOTEXTTAU (MERRA-2)'
     };
   } catch {
-    console.warn('NASA API Fetch Error, falling back to simulated physics.');
-    // Fallback to a seasonal/lat-based simulation if NASA API fails
-    const simulatedAod = 0.15 + (Math.random() * 0.1);
+    console.warn('NASA POWER API fetch failed — using static low-confidence fallback.');
+    // Static regional estimate based on latitude; no random values
+    const latAbsNorm = Math.min(1, Math.abs(lat) / 60);
+    const fallbackAod = 0.15 + latAbsNorm * 0.05; // 0.15~0.20 by latitude
     return {
-      aod: simulatedAod,
-      confidence: 40,
-      source: 'Simulated Physics (Fallback)'
+      aod: Math.round(fallbackAod * 100) / 100,
+      confidence: 30,
+      source: 'Static Fallback (NASA unavailable)'
     };
   }
 };
@@ -120,4 +120,39 @@ export const calculateSatellitePM25 = (aod: number, stationPM: number) => {
     uncertainty: stationPM > 0 ? 12 : 25,
     bias: Math.round((finalPM - stationPM) * 10) / 10
   };
+};
+
+/**
+ * ML-aware PM2.5 estimation.
+ * Tries ML API first; falls back to calculateSatellitePM25 on failure.
+ */
+export const estimatePM25WithML = async (
+  aod: number,
+  stationPM: number,
+  lat: number,
+  lon: number,
+  weather: { temperature?: number; humidity?: number; wind_speed?: number; pblh?: number } = {},
+): Promise<{ pm25: number; uncertainty: number; bias: number; source: string; p10?: number; p90?: number }> => {
+  const ml = await predictPM25(
+    lat, lon, aod,
+    weather.temperature ?? 20.0,
+    weather.humidity ?? 50.0,
+    weather.wind_speed ?? 3.0,
+    weather.pblh ?? 1000.0,
+  );
+
+  if (ml) {
+    return {
+      pm25: Math.round(ml.predicted_p50 * 10) / 10,
+      uncertainty: Math.round(ml.uncertainty * 10) / 10,
+      bias: Math.round((ml.predicted_p50 - stationPM) * 10) / 10,
+      source: `ML-AODtoPM25Model (${ml.method})`,
+      p10: Math.round(ml.predicted_p10 * 10) / 10,
+      p90: Math.round(ml.predicted_p90 * 10) / 10,
+    };
+  }
+
+  // Fallback to physics model
+  const physics = calculateSatellitePM25(aod, stationPM);
+  return { ...physics, source: 'Physics-Fallback' };
 };

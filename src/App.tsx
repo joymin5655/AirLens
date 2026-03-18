@@ -1,10 +1,9 @@
-import { useLocation, Routes, Route } from 'react-router-dom';
+import { useLocation, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Dashboard from './pages/Dashboard';
-import ComingSoon from './pages/ComingSoon';
 import GlobeView from './pages/GlobeView';
 import PolicyView from './pages/PolicyView';
 import Analytics from './pages/Analytics';
@@ -16,9 +15,7 @@ import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import PageTransition from './components/PageTransition';
 import ProtectedRoute from './components/ProtectedRoute';
-import { supabase } from './logic/supabase';
-import { useAuthStore } from './logic/useAuthStore';
-import { useThemeStore, applyTheme } from './logic/useThemeStore';
+import { AuthProvider } from './components/AuthProvider';
 
 // Loading fallback component
 const PageLoader = () => (
@@ -28,70 +25,67 @@ const PageLoader = () => (
   </div>
 );
 
-function App() {
+// Public Layout with Navbar and Footer (no auth required)
+const PublicLayout = () => (
+  <div className="flex flex-col min-h-screen bg-bg-base transition-colors duration-500">
+    <Navbar />
+    <main className="flex-1">
+      <Outlet />
+    </main>
+    <Footer />
+  </div>
+);
+
+// Common Layout with Navbar and Footer
+const AppLayout = () => {
   const location = useLocation();
   const isGlobe = location.pathname === '/globe';
-  const isComingSoon = location.pathname === '/';
-  
-  const setUser = useAuthStore((state) => state.setUser);
-  const setLoading = useAuthStore((state) => state.setLoading);
-  const theme = useThemeStore((state) => state.theme);
 
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
+  return (
+    <div className="flex flex-col min-h-screen bg-bg-base transition-colors duration-500">
+      <Navbar />
+      <main className={`flex-1 ${isGlobe ? '' : 'pt-20'}`}>
+        <Outlet />
+      </main>
+      {!isGlobe && <Footer />}
+    </div>
+  );
+};
 
-  useEffect(() => {
-    // 1. Initial session check
-    const initAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          setUser(session.user);
-        } else {
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error('Initial Auth Error:', err);
-        setLoading(false);
-      }
-    };
-    initAuth();
-
-    // 2. Continuous state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [setUser, setLoading]);
+function App() {
+  const location = useLocation();
 
   return (
     <Suspense fallback={<PageLoader />}>
-      <div className="flex flex-col min-h-screen bg-bg-base transition-colors duration-500">
-        {!isComingSoon && <Navbar />}
-        <main className={`flex-1 ${isGlobe ? '' : isComingSoon ? '' : 'pt-20'}`}>
-          <AnimatePresence mode="wait">
-            <Routes location={location} key={location.pathname}>
-              {/* Public routes */}
-              <Route path="/" element={<PageTransition><ComingSoon /></PageTransition>} />
-              <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
-              <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-              <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+      <AuthProvider>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            {/* Root → landing page */}
+            <Route path="/" element={<Navigate to="/about" replace />} />
+
+            {/* Public pages with Navbar/Footer */}
+            <Route element={<PublicLayout />}>
               <Route path="/about" element={<PageTransition><About /></PageTransition>} />
-              {/* Protected routes — require login */}
-              <Route path="/globe" element={<ProtectedRoute><PageTransition><GlobeView /></PageTransition></ProtectedRoute>} />
-              <Route path="/policy" element={<ProtectedRoute><PageTransition><PolicyView /></PageTransition></ProtectedRoute>} />
-              <Route path="/analytics" element={<ProtectedRoute><PageTransition><Analytics /></PageTransition></ProtectedRoute>} />
-              <Route path="/camera" element={<ProtectedRoute><PageTransition><CameraAI /></PageTransition></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><PageTransition><Profile /></PageTransition></ProtectedRoute>} />
-              <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-            </Routes>
-          </AnimatePresence>
-        </main>
-        {!isGlobe && !isComingSoon && <Footer />}
-      </div>
+            </Route>
+
+            {/* Auth – standalone, no layout */}
+            <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+
+            {/* SaaS Protected App Shell */}
+            <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route path="/today" element={<PageTransition><Dashboard /></PageTransition>} />
+              <Route path="/globe" element={<PageTransition><GlobeView /></PageTransition>} />
+              <Route path="/policy" element={<PageTransition><PolicyView /></PageTransition>} />
+              <Route path="/analytics" element={<PageTransition><Analytics /></PageTransition>} />
+              <Route path="/camera" element={<PageTransition><CameraAI /></PageTransition>} />
+              <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+              <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
+            </Route>
+
+            <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+          </Routes>
+        </AnimatePresence>
+      </AuthProvider>
     </Suspense>
   );
 }

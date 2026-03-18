@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Zap, Info, ArrowRight, TrendingUp, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGeolocation } from '../../logic/useGeolocation';
 import { useAirQualityStore } from '../../logic/useAirQualityStore';
-import { getAQIGrade } from '../../logic/airQualityService';
+import { getAQIGrade, fetchWaqiForecast } from '../../logic/airQualityService';
 import AQICard from '../AQICard';
 import LocationCard from '../LocationCard';
 import DataSourcesCard from '../DataSourcesCard';
@@ -33,12 +33,25 @@ const LocalSensing = () => {
   const { t } = useTranslation();
   const { location, error: geoError } = useGeolocation();
   const { data: aqiData, loading: aqiLoading, fetchData } = useAirQualityStore();
+  const [forecastPM, setForecastPM] = useState<number[]>([]);
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [manualCity, setManualCity] = useState('');
 
   useEffect(() => {
     if (location && !aqiData) {
       fetchData(location.latitude, location.longitude);
     }
   }, [location, aqiData, fetchData]);
+
+  // Load WAQI forecast sparkline once station UID is available
+  useEffect(() => {
+    const stationUid = (aqiData as unknown as Record<string, unknown>)?.idx;
+    if (typeof stationUid === 'number' && stationUid > 0) {
+      fetchWaqiForecast(stationUid).then((data) => {
+        if (data.length > 0) setForecastPM(data);
+      });
+    }
+  }, [aqiData]);
 
   const getHealthAdvice = (grade: string) => {
     const key = grade.toUpperCase().replace(/\s+/g, '_');
@@ -48,11 +61,17 @@ const LocalSensing = () => {
   const currentPM = (aqiData?.iaqi as Record<string, Record<string, number>>)?.pm25?.v || 0;
   const currentGrade = getAQIGrade(currentPM);
 
+  // Use real WAQI forecast data when available; fall back to empty (no synthetic multiples)
+  const sparkValues = forecastPM.length >= 2 ? forecastPM : (currentPM > 0 ? [currentPM] : []);
+  const sparkLabels = sparkValues.length === 7
+    ? ['6d', '5d', '4d', '3d', '2d', '1d', 'Now']
+    : sparkValues.map((_, i) => `${sparkValues.length - 1 - i}d`).map((l, i) => i === sparkValues.length - 1 ? 'Now' : l);
+
   const sparklineData = {
-    labels: ['6d', '5d', '4d', '3d', '2d', '1d', 'Now'],
+    labels: sparkLabels,
     datasets: [
       {
-        data: [currentPM * 1.2, currentPM * 1.1, currentPM * 0.9, currentPM * 1.3, currentPM * 0.8, currentPM * 0.95, currentPM],
+        data: sparkValues,
         borderColor: '#25e2f4',
         borderWidth: 3,
         pointRadius: 0,
@@ -94,9 +113,37 @@ const LocalSensing = () => {
             </h2>
 
             {geoError && (
-              <motion.p initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="text-xs text-red-500 font-bold bg-red-50 p-4 rounded-2xl border border-red-100 flex items-center gap-3">
-                <Info size={16}/> {geoError}. Enable location access.
-              </motion.p>
+              <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="space-y-3">
+                <p className="text-xs text-red-500 font-bold bg-red-50 dark:bg-red-500/10 p-4 rounded-2xl border border-red-100 dark:border-red-500/20 flex items-center gap-3">
+                  <Info size={16}/> {geoError}.{' '}
+                  {!showManualInput && (
+                    <button
+                      onClick={() => setShowManualInput(true)}
+                      className="underline ml-1 text-red-600 hover:text-red-400 transition-colors"
+                    >
+                      도시 직접 입력
+                    </button>
+                  )}
+                </p>
+                {showManualInput && (
+                  <div className="flex gap-2">
+                    <input
+                      autoFocus
+                      type="text"
+                      value={manualCity}
+                      onChange={(e) => setManualCity(e.target.value)}
+                      placeholder="City name (e.g. Seoul)"
+                      className="flex-1 bg-bg-base border border-primary/30 rounded-xl px-3 py-2 text-xs font-medium text-text-main outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                    <button
+                      onClick={() => setShowManualInput(false)}
+                      className="px-3 py-2 rounded-xl text-xs font-bold text-text-dim hover:text-text-main border border-text-main/10 hover:border-text-main/30 transition-all"
+                    >
+                      취소
+                    </button>
+                  </div>
+                )}
+              </motion.div>
             )}
           </div>
 
@@ -120,17 +167,19 @@ const LocalSensing = () => {
         </div>
 
         <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <AQICard 
-            pm25={currentPM} 
-            grade={currentGrade} 
-            loading={aqiLoading} 
-            confScore={(aqiData?.dqss as number) || 85} 
+          <AQICard
+            pm25={currentPM}
+            grade={currentGrade}
+            loading={aqiLoading}
+            confScore={(aqiData?.dqss as number) || 85}
+            satellite={aqiData?.satellite}
           />
           <div className="flex flex-col gap-8">
-            <DataSourcesCard 
-              sources={(aqiData?.sources as string[]) || ['Global AQ Grid']} 
-              dqss={(aqiData?.dqss as number) || 85} 
-              loading={aqiLoading} 
+            <DataSourcesCard
+              sources={(aqiData?.sources as string[]) || ['Global AQ Grid']}
+              dqss={(aqiData?.dqss as number) || 85}
+              loading={aqiLoading}
+              mlDqss={aqiData?.mlDqss}
             />
 
             <motion.div 
@@ -147,8 +196,8 @@ const LocalSensing = () => {
                 <Line data={sparklineData} options={sparklineOptions} />
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-text-main/10">
-                 <span className="text-[9px] font-black uppercase text-text-dim/60">Seasonal Drift Adjusted</span>
-                 <span className="text-[9px] font-black uppercase text-primary">v1.1 Fusion</span>
+                 <span className="text-[10px] font-black uppercase text-text-dim">Seasonal Drift Adjusted</span>
+                 <span className="text-[10px] font-black uppercase text-primary">v1.1 Fusion</span>
               </div>
             </motion.div>
           </div>
@@ -163,10 +212,15 @@ const LocalSensing = () => {
              <div className="space-y-6 relative z-10 max-w-xl text-center md:text-left">
                <div className="inline-flex items-center gap-3 bg-bg-base/10 px-4 py-1.5 rounded-full border border-bg-base/10">
                   <TrendingUp size={14} className="text-primary"/>
-                  <p className="text-label !text-primary/80">Global Benchmark</p>
+                  <p className="text-label !text-primary">Global Benchmark</p>
                </div>
                <h4 className="heading-xl !text-4xl md:!text-5xl !text-bg-base">Decode Your Atmospheric <span className="text-primary italic">Standing.</span></h4>
-               <p className="text-lg text-bg-base/60 font-serif italic leading-relaxed">"Your local PM2.5 concentration is currently 12.4% below the global urban median of 28.5 µg/m³."</p>
+               <p className="text-base text-bg-base/85 leading-relaxed">{(() => {
+                  const GLOBAL_URBAN_MEDIAN = 28.5;
+                  const pctDiff = Math.round(Math.abs(currentPM - GLOBAL_URBAN_MEDIAN) / GLOBAL_URBAN_MEDIAN * 1000) / 10;
+                  const direction = currentPM < GLOBAL_URBAN_MEDIAN ? 'below' : 'above';
+                  return `Your local PM2.5 concentration is currently ${pctDiff}% ${direction} the global urban median of ${GLOBAL_URBAN_MEDIAN} µg/m³.`;
+                })()}</p>
              </div>
 
              <Link to="/globe" className="mt-8 md:mt-0 w-24 h-24 bg-bg-base/10 backdrop-blur-3xl rounded-[32px] flex items-center justify-center hover:bg-primary hover:text-text-main transition-all duration-700 relative z-10 border border-bg-base/20 group/btn shadow-2xl">

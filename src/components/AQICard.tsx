@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Info } from 'lucide-react';
+import type { SatelliteEstimation } from '../logic/types';
 
 interface AQICardProps {
   pm25: number;
   grade: string;
   loading: boolean;
   confScore?: number;
+  satellite?: SatelliteEstimation;
 }
 
 const getGradeColors = (grade: string) => {
@@ -24,16 +26,22 @@ const getGradeColors = (grade: string) => {
   }
 };
 
-const AQICard = ({ pm25, grade, loading, confScore = 92 }: AQICardProps) => {
+const AQICard = ({ pm25, grade, loading, confScore = 92, satellite }: AQICardProps) => {
   const { t } = useTranslation();
   const colors = getGradeColors(grade);
 
+  const displayConfidence = satellite?.uncertainty != null
+    ? Math.max(0, Math.round(100 - satellite.uncertainty * 3))
+    : confScore;
+
+  const sourceLabel = satellite?.source ?? 'NASA AOD Physics';
+
   return (
-    <motion.div 
+    <motion.div
       whileHover={{ y: -8, scale: 1.02 }}
       className="narrative-card shadow-2xl !p-10 relative overflow-hidden group transition-colors duration-500"
     >
-      <div 
+      <div
         className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] -mr-32 -mt-32 opacity-20 transition-all duration-1000 group-hover:scale-150"
         style={{ backgroundColor: colors.primary }}
       ></div>
@@ -54,6 +62,11 @@ const AQICard = ({ pm25, grade, loading, confScore = 92 }: AQICardProps) => {
           <p className="heading-lg !text-4xl italic !text-text-main leading-none">
             {loading ? t('AQI_CARD.ANALYZING') : grade}
           </p>
+          {!loading && satellite?.p10 != null && satellite?.p90 != null && (
+            <p className="text-[10px] font-black text-text-dim/50 uppercase tracking-widest mt-1">
+              {satellite.p10.toFixed(1)} – {satellite.p90.toFixed(1)} µg/m³
+            </p>
+          )}
         </div>
 
         <div className="w-full space-y-4 pt-4 border-t border-text-main/5">
@@ -61,20 +74,20 @@ const AQICard = ({ pm25, grade, loading, confScore = 92 }: AQICardProps) => {
             <div className="flex items-center gap-2 text-label !text-text-dim">
               <ShieldCheck size={14} className="text-primary" /> Confidence
             </div>
-            <span className="text-xs font-black text-text-main">{confScore}%</span>
+            <span className="text-xs font-black text-text-main">{displayConfidence}%</span>
           </div>
           <div className="h-2 w-full bg-text-main/5 rounded-full overflow-hidden shadow-inner">
-            <motion.div 
+            <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${confScore}%` }}
+              animate={{ width: `${displayConfidence}%` }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              className="h-full rounded-full shadow-glow" 
+              className="h-full rounded-full shadow-glow"
               style={{ backgroundColor: colors.primary }}
             ></motion.div>
           </div>
           <div className="flex items-center gap-2 text-text-dim/40 group-hover:text-text-dim/60 transition-colors">
              <Info size={12}/>
-             <span className="text-[9px] font-black uppercase tracking-widest leading-none">Calibrated via NASA AOD Grid v4</span>
+             <span className="text-[9px] font-black uppercase tracking-widest leading-none truncate">{sourceLabel}</span>
           </div>
         </div>
       </div>

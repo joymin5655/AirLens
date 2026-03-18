@@ -163,6 +163,12 @@ const PolicyView = () => {
         <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
           <ShieldAlert size={16} className="shrink-0" />
           <span>데이터 로드 실패: {fetchError.message}</span>
+          <button
+            onClick={() => window.location.reload()}
+            className="ml-auto text-xs font-black uppercase tracking-widest text-red-400 hover:text-red-300 underline whitespace-nowrap"
+          >
+            재시도
+          </button>
         </div>
       )}
       <Helmet>

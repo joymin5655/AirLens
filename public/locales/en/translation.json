@@ -16,7 +16,11 @@
     "NO_CAPTURES": "No measurement records found in your vault."
   },
   "CAMERA": {
-    "PHYSICS_ENGINE_DESC": "Distinguishes fog and PM2.5 with a PINN structure enforcing Beer-Lambert law. DINOv2-based self-supervised model extracts haze patterns."
+    "PHYSICS_ENGINE_DESC": "Distinguishes fog and PM2.5 with a PINN structure enforcing Beer-Lambert law. DINOv2-based self-supervised model extracts haze patterns.",
+    "INVALID_FILE_TYPE": "Unsupported file type. Please use JPG, PNG, or WebP.",
+    "FILE_TOO_LARGE": "File size must be 10 MB or less.",
+    "DUPLICATE_IMAGE": "This image has already been analyzed.",
+    "UPGRADE_PLAN": "Upgrade Plan"
   },
   "LABELS": {
     "NEW_MEASUREMENT": "New Measurement",

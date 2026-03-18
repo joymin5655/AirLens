@@ -52,7 +52,7 @@ const PlatformHub = () => {
 
                 <div className="space-y-2 relative z-10">
                   <p className="heading-lg !text-2xl group-hover:text-primary transition-colors">{link.title}</p>
-                  <p className="text-label !text-text-dim !opacity-60 group-hover:!opacity-100 transition-opacity">{link.sub}</p>
+                  <p className="text-label !text-text-dim group-hover:!text-primary transition-colors">{link.sub}</p>
                 </div>
 
                 <div className="mt-8 flex items-center gap-2 text-[9px] font-black uppercase text-primary opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1">
@@ -81,9 +81,9 @@ const PlatformHub = () => {
             </div>
 
             <div className="space-y-6">
-              <h3 className="heading-lg !text-bg-base !text-5xl">{t('LABELS.PURPOSE')}</h3>
-              <p className="text-bg-base/60 leading-relaxed font-serif text-xl italic pr-10">
-                "{t('LABELS.PURPOSE_DESC') || 'Empowering citizens and policymakers with ground-truth environmental intelligence through advanced physics-ML fusion.'}"
+              <h3 className="text-2xl font-black !text-bg-base leading-snug">{t('LABELS.PURPOSE')}</h3>
+              <p className="text-bg-base/85 leading-relaxed text-base pr-10">
+                {t('LABELS.PURPOSE_DESC') || 'Empowering citizens and policymakers with ground-truth environmental intelligence through advanced physics-ML fusion.'}
               </p>
             </div>
 
@@ -93,7 +93,7 @@ const PlatformHub = () => {
               </div>
               <div className="space-y-1">
                 <span className="text-[11px] font-black font-sans uppercase tracking-[0.3em] block text-bg-base">Provenance Matrix Verified</span>
-                <span className="text-[9px] text-bg-base/40 uppercase tracking-[0.2em] font-bold italic">DQSS Intelligence Certificate Active</span>
+                <span className="text-[10px] text-bg-base/65 uppercase tracking-[0.2em] font-bold">DQSS Intelligence Certificate Active</span>
               </div>
             </div>
           </div>

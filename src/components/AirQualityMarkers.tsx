@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';
-import axios from 'axios';
-import { APP_CONFIG } from '../logic/config';
+import { fetchGlobalMarkers } from '../logic/dataService';
 import { getMarkerColor } from '../logic/airQualityService';
 
 // Helper to convert lat/lon to 3D Cartesian coordinates
@@ -17,18 +16,12 @@ const latLonToVector3 = (lat: number, lon: number, radius: number) => {
 };
 
 const AirQualityMarkers = () => {
-  const [stations, setStations] = useState<Record<string, unknown>[]>([]);
+  const [stations, setStations] = useState<any[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
-      try {
-        const res = await axios.get(`${APP_CONFIG.BASE_DATA_URL}/waqi/latest.json`);
-        if (res.data && res.data.cities) {
-          setStations(res.data.cities);
-        }
-      } catch (err) {
-        console.error('Failed to load global station markers:', err);
-      }
+      const data = await fetchGlobalMarkers();
+      setStations(data);
     };
     loadData();
   }, []);
@@ -36,11 +29,15 @@ const AirQualityMarkers = () => {
   return (
     <group>
       {stations.map((station: any, idx) => {
-        const [lat, lon] = station.location.geo;
-        const position = latLonToVector3(lat, lon, 1.005); // Slightly above globe surface
-        const pm25 = station.pollutants.pm25 || 0;
+        // Handle both DB schema and WAQI JSON schema
+        const geo = station.location?.geo || station.coordinates;
+        if (!geo) return null;
+
+        const [lat, lon] = geo;
+        const position = latLonToVector3(lat, lon, 1.005);
+        const pm25 = (station.pollutants?.pm25 || station.pm25) || 0;
         const color = getMarkerColor(pm25);
-        
+
         return (
           <group key={idx} position={position}>
             {/* Core Point */}
@@ -53,7 +50,7 @@ const AirQualityMarkers = () => {
               <sphereGeometry args={[0.015, 16, 16]} />
               <meshBasicMaterial color={color} transparent opacity={0.3} />
             </mesh>
-            {/* Atmosphere Spike (Optional, represents PM2.5 height) */}
+            {/* Atmosphere Spike */}
             <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
                <boxGeometry args={[0.002, 0.002, Math.max(0.01, pm25 / 1000)]} />
                <meshBasicMaterial color={color} transparent opacity={0.6} />

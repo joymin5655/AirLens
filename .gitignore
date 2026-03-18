@@ -1,8 +1,10 @@
 # ===== AI / 작업 기록 (GitHub 미포함) =====
 GEMINI.md
+CLAUDE.md
 blueprint.md
 /home/user/.gemini/
 .gemini/
+.claude/
 docs/*.md
 
 # ===== 보안: 절대 커밋 금지 =====

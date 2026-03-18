@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Globe as GlobeIcon, Edit3, Heart, Award, LogOut, Save, ArrowRight, Sparkles, Zap, ShieldCheck } from 'lucide-react';
@@ -6,6 +7,7 @@ import { useAuthStore } from '../../logic/useAuthStore';
 import { supabase } from '../../logic/supabase';
 import { APP_CONFIG } from '../../logic/config';
 import { motion, AnimatePresence } from 'framer-motion';
+import AdBanner from '../AdBanner';
 
 const HeroProfile = () => {
   const { t } = useTranslation();
@@ -21,8 +23,15 @@ const HeroProfile = () => {
       setFullName(user.user_metadata?.full_name || '');
       setLiked(localStorage.getItem(`airlens-liked-${user.id}`) === 'true');
       const fetchBio = async () => {
-        const { data: profileData } = await supabase.from('profiles').select('bio').eq('id', user.id).single();
-        if (profileData?.bio) setBio(profileData.bio);
+        try {
+          const { data: profileData, error } = await supabase.from('profiles').select('bio, full_name').eq('id', user.id).single();
+          if (!error && profileData) {
+            if (profileData.bio) setBio(profileData.bio);
+            if (profileData.full_name) setFullName(profileData.full_name);
+          }
+        } catch (err) {
+          console.warn('Profile fetch ignored:', err);
+        }
       };
       fetchBio();
     }
@@ -52,7 +61,7 @@ const HeroProfile = () => {
 
       setIsEditing(false);
     } catch (err: unknown) {
-      alert('Update failed: ' + (err instanceof Error ? err.message : String(err)));
+      toast.error('Update failed: ' + (err instanceof Error ? err.message : String(err)));
     } finally {
       setSaving(false);
     }
@@ -62,8 +71,8 @@ const HeroProfile = () => {
     await supabase.auth.signOut();
   };
 
-  const defaultBio = isAdmin ? t('DEFAULT_BIO.ADMIN') : t('DEFAULT_BIO.USER');
-  const userRole = isAdmin ? t('LABELS.INTEL_MANAGER') : t('LABELS.CITIZEN_SCIENTIST');
+  const defaultBio = isAdmin() ? t('DEFAULT_BIO.ADMIN') : t('DEFAULT_BIO.USER');
+  const userRole = isAdmin() ? t('LABELS.INTEL_MANAGER') : t('LABELS.CITIZEN_SCIENTIST');
 
   if (loading) {
     return (
@@ -91,7 +100,7 @@ const HeroProfile = () => {
           >
             <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#25e2f4] animate-pulse"></div>
             <span className="text-label !text-text-main">
-              {user ? `Atmospheric Flux: ${user.email?.split('@')[0]}` : "Deciphering the Invisible"}
+              {user ? `Atmospheric Node: ${user.email}` : "Deciphering the Invisible"}
             </span>
           </motion.div>
 
@@ -102,10 +111,10 @@ const HeroProfile = () => {
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ type: "spring", stiffness: 100 }}
-                  className="heading-xl !text-4xl sm:!text-6xl md:!text-7xl lg:!text-[110px]"
+                  className="heading-xl !text-4xl sm:!text-6xl md:!text-7xl lg:!text-[100px]"
                 >
                   {t('HERO.WELCOME_A')} <br />
-                  <span className="text-primary italic font-serif font-light">Insight</span>
+                  <span className="text-primary italic font-serif font-light">Observer</span>
                 </motion.h1>
               </div>
 
@@ -115,8 +124,8 @@ const HeroProfile = () => {
                 transition={{ delay: 0.5 }}
                 className="flex items-center gap-6"
               >
-                <p className="text-xl leading-relaxed text-text-dim max-w-xl font-serif italic text-glow">
-                  "{t('HERO.QUOTE')}"
+                <p className="text-lg leading-relaxed text-text-dim max-w-xl">
+                  Welcome back to the Intelligence Matrix. Your sensing data is currently being synchronized across 480 global regional nodes.
                 </p>
               </motion.div>
 
@@ -148,7 +157,7 @@ const HeroProfile = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="text-lg sm:text-xl md:text-2xl leading-relaxed text-text-dim max-w-xl font-serif font-light"
+                className="text-lg sm:text-xl leading-relaxed text-text-dim max-w-xl"
               >
                 {t('HERO.DESCRIPTION')}
               </motion.p>
@@ -249,7 +258,7 @@ const HeroProfile = () => {
                           <div className="flex items-center gap-4">
                             <h3 className="heading-lg !text-4xl">{fullName || user.email?.split('@')[0]}</h3>
                             <AnimatePresence>
-                              {isAdmin && (
+                              {isAdmin() && (
                                 <motion.span 
                                   initial={{ opacity: 0, scale: 0 }} 
                                   animate={{ opacity: 1, scale: 1 }}
@@ -292,6 +301,7 @@ const HeroProfile = () => {
                   </AnimatePresence>
                 </div>
               </div>
+              <AdBanner position="bottom" />
             </div>
           ) : (
             <div className="relative group cursor-pointer perspective-1000">

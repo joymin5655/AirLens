@@ -16,7 +16,11 @@
     "NO_CAPTURES": "보관함에 저장된 측정 기록이 없습니다."
   },
   "CAMERA": {
-    "PHYSICS_ENGINE_DESC": "Beer-Lambert 법칙을 강제한 PINN 구조로 안개와 미세먼지를 구분합니다. DINOv2 기반의 자기지도학습 모델이 헤이즈 패턴을 추출합니다."
+    "PHYSICS_ENGINE_DESC": "Beer-Lambert 법칙을 강제한 PINN 구조로 안개와 미세먼지를 구분합니다. DINOv2 기반의 자기지도학습 모델이 헤이즈 패턴을 추출합니다.",
+    "INVALID_FILE_TYPE": "지원하지 않는 파일 형식입니다 (JPG/PNG/WebP만 가능)",
+    "FILE_TOO_LARGE": "파일 크기는 10MB 이하여야 합니다",
+    "DUPLICATE_IMAGE": "이미 분석된 이미지입니다",
+    "UPGRADE_PLAN": "플랜 업그레이드"
   },
   "LABELS": {
     "NEW_MEASUREMENT": "New Measurement",

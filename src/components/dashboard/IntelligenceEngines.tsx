@@ -35,8 +35,8 @@ const IntelligenceEngines = () => {
             </h2>
           </div>
           <div className="max-w-md space-y-4">
-             <p className="text-text-dim font-serif italic text-xl leading-relaxed">
-              "Our proprietary intelligence pipeline fuses high-resolution satellite imagery with global sensor grids to decipher the invisible flux of our planet."
+             <p className="text-text-dim text-base leading-relaxed">
+              Our intelligence pipeline fuses high-resolution satellite imagery with global sensor grids to decipher the invisible flux of our planet.
              </p>
           </div>
         </div>
@@ -59,10 +59,10 @@ const IntelligenceEngines = () => {
 
               <div className="space-y-4 relative z-10">
                 <div className="flex flex-col gap-1">
-                  <span className="text-label !text-primary !opacity-80 group-hover:!opacity-100 transition-opacity">{item.label}</span>
+                  <span className="text-label !text-primary">{item.label}</span>
                   <h3 className="heading-lg !text-3xl group-hover:text-primary transition-colors duration-500">{item.title}</h3>
                 </div>
-                <p className="text-p leading-relaxed font-serif italic pr-4 !text-text-main/70 group-hover:!text-text-main transition-opacity">{item.desc}</p>
+                <p className="text-p leading-relaxed pr-4 !text-text-main group-hover:!text-text-main">{item.desc}</p>
               </div>
 
               <div className="pt-10 flex items-center justify-between relative z-10 group-hover:translate-x-2 transition-transform duration-700">

@@ -1,5 +1,18 @@
 // ── Global Types for AirLens ──
 
+import type { MLDQSSResult } from './mlService';
+
+export interface SatelliteEstimation {
+  pm25: number;
+  uncertainty: number;
+  bias: number;
+  source: string;       // "ML-AODtoPM25Model (xgb_lgb)" | "Physics-Fallback"
+  p10?: number;
+  p90?: number;
+  confidence?: number;
+  granule_id?: string;
+}
+
 export interface AirQualityData {
   pm25: number;
   aqi: number;
@@ -11,6 +24,8 @@ export interface AirQualityData {
   grade: 'Good' | 'Moderate' | 'Unhealthy' | 'Very Unhealthy';
   dqss?: number;
   iaqi?: any;
+  satellite?: SatelliteEstimation;
+  mlDqss?: MLDQSSResult;
 }
 
 export interface PolicyImpact {
@@ -74,7 +89,6 @@ export interface PolicyIndexEntry {
   countryCode: string;
   region: string;
   flag: string;
-  dataFile: string;
   policyCount: number;
   lastUpdated: string;
 }

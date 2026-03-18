@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';
-import axios from 'axios';
-import { APP_CONFIG } from '../logic/config';
+import { fetchMajorCities } from '../logic/dataService';
 
 // Helper to convert lat/lon to 3D Cartesian coordinates
 const latLonToVector3 = (lat: number, lon: number, radius: number) => {
@@ -16,16 +15,12 @@ const latLonToVector3 = (lat: number, lon: number, radius: number) => {
 };
 
 const CityMarkers = () => {
-  const [cities, setCities] = useState<Record<string, unknown>[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
-      try {
-        const res = await axios.get(`${APP_CONFIG.BASE_DATA_URL}/major-cities.json`);
-        setCities(res.data);
-      } catch (err) {
-        console.error('Failed to load major cities:', err);
-      }
+      const data = await fetchMajorCities();
+      setCities(data);
     };
     loadData();
   }, []);

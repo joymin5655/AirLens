@@ -1,37 +1,45 @@
 import { useState, useEffect, useRef } from 'react';
-import { BarChart3, TrendingUp, AlertTriangle, ArrowUpRight, ArrowDownRight, Info, Filter, Download, Globe, Zap, ShieldCheck, ChevronDown } from 'lucide-react';
+import { BarChart3, TrendingUp, AlertTriangle, ArrowUpRight, ArrowDownRight, Info, Filter, Download, Globe, Zap, ShieldCheck, ChevronDown, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { fetchPolicyIndex } from '../logic/policyService';
+import { fetchGlobalStats } from '../logic/dataService';
 import type { PolicyIndexEntry } from '../logic/types';
+import { useDataQuery } from '../logic/useDataQuery';
 
 /**
  * 실제 데이터 기반 결정론적 점수 계산
- * - policyCount: 정책 깊이 (최대 50점)
- * - lastUpdated: 데이터 신선도 (최대 30점)
- * - countryCode 해시: 고정된 편차 (최대 19점)
- * 동일 국가는 필터 여부와 무관하게 항상 같은 점수를 가짐
  */
 const getScore = (c: PolicyIndexEntry): number => {
   const policyScore = Math.min(50, c.policyCount * 10);
   const monthsOld = (Date.now() - new Date(c.lastUpdated).getTime()) / (1000 * 60 * 60 * 24 * 30);
   const freshnessScore = Math.max(0, 30 - Math.floor(monthsOld * 1.5));
-  const codeHash = c.countryCode.split('').reduce((a, ch) => a + ch.charCodeAt(0), 0);
-  const hashScore = codeHash % 20;
-  return Math.min(99, policyScore + freshnessScore + hashScore);
+  const diversityScore = (c.policyCount % 5) * 4;
+  return Math.min(99, policyScore + freshnessScore + diversityScore);
 };
 
 const Analytics = () => {
-  const [countries, setCountries] = useState<PolicyIndexEntry[]>([]);
+  const { data: countries = [], loading, error: queryError } = useDataQuery<PolicyIndexEntry[]>(
+    'policy-index',
+    fetchPolicyIndex
+  );
+
   const [showFilter, setShowFilter] = useState(false);
   const [regionFilter, setRegionFilter] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const [globalStats, setGlobalStats] = useState<any[]>([]);
+  const [statsError, setStatsError] = useState<string | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
+  const loadGlobalStats = () => {
+    setStatsError(null);
+    fetchGlobalStats()
+      .then(setGlobalStats)
+      .catch((err: unknown) => setStatsError(err instanceof Error ? err.message : 'Failed to load stats'));
+  };
+
   useEffect(() => {
-    fetchPolicyIndex().then(data => {
-      setCountries(data);
-    });
+    loadGlobalStats();
   }, []);
 
   useEffect(() => {
@@ -44,8 +52,8 @@ const Analytics = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const regions = [...new Set(countries.map(c => c.region))].filter(Boolean).sort() as string[];
-  const filteredCountries = (regionFilter ? countries.filter(c => c.region === regionFilter) : countries)
+  const regions = [...new Set((countries || []).map(c => c.region))].filter(Boolean).sort() as string[];
+  const filteredCountries = ((regionFilter && countries) ? countries.filter(c => c.region === regionFilter) : (countries || []))
     .map(c => ({ ...c, score: getScore(c) }))
     .sort((a, b) => b.score - a.score);
   const displayedCountries = showAll ? filteredCountries : filteredCountries.slice(0, 8);
@@ -66,12 +74,6 @@ const Analytics = () => {
     URL.revokeObjectURL(url);
   };
 
-  const globalStats = [
-    { label: 'Global PM2.5 Avg', value: '28.4', unit: 'µg/m³', trend: -2.4, status: 'improving', color: 'text-primary' },
-    { label: 'Active Matrix Nodes', value: '12,482', unit: 'Units', trend: 156, status: 'growing', color: 'text-emerald-500' },
-    { label: 'Intelligence Coverage', value: '64.2%', unit: 'Pop.', trend: 5.1, status: 'improving', color: 'text-orange-500' },
-  ];
-
   return (
     <div className="pt-28 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 lg:space-y-16">
       <Helmet>
@@ -87,7 +89,7 @@ const Analytics = () => {
             className="inline-flex items-center gap-3 bg-bg-card backdrop-blur-xl px-5 py-2 rounded-full border border-white/20 shadow-xl"
           >
             <BarChart3 className="text-primary" size={14} />
-            <span className="text-label">Global Matrix v1.1</span>
+            <span className="text-label">Global Matrix v1.8</span>
           </motion.div>
           <h1 className="heading-xl">
             Atmospheric <br/><span className="text-primary italic font-serif font-light">Intelligence</span>
@@ -96,14 +98,27 @@ const Analytics = () => {
         <div className="max-w-md space-y-4">
            <div className="h-1 w-20 bg-primary mx-auto md:ml-0 rounded-full"></div>
            <p className="text-p italic">
-            "Fusing causal inference with real-time sensing to reveal the Pure State of our planet's atmosphere across 66 regional nodes."
+            "Fusing causal inference with real-time sensing to reveal the Pure State of our planet's atmosphere across global regional nodes."
            </p>
         </div>
       </header>
 
+      {(queryError || statsError) && (
+        <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          <AlertTriangle size={16} className="shrink-0" />
+          <span>{queryError?.message ?? statsError}</span>
+          <button
+            onClick={loadGlobalStats}
+            className="ml-auto text-xs font-black uppercase tracking-widest text-red-400 hover:text-red-300 underline"
+          >
+            재시도
+          </button>
+        </div>
+      )}
+
       {/* Global Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {globalStats.map((stat, i) => (
+        {globalStats.map((stat, i) => (stat && (
           <motion.div 
             key={i}
             initial={{ opacity: 0, y: 20 }}
@@ -130,7 +145,7 @@ const Analytics = () => {
               <span className="text-label !text-text-dim/40 leading-none">Seasonal Adjust</span>
             </div>
           </motion.div>
-        ))}
+        )))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -203,39 +218,50 @@ const Analytics = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-subtle">
-                  {displayedCountries.map((c, i) => (
-                    <tr key={c.countryCode} className="hover:bg-primary/10 transition-colors group cursor-pointer">
-                      <td className="px-10 py-8 text-p !text-text-dim group-hover:text-primary">#{(i + 1).toString().padStart(2, '0')}</td>
-                      <td className="px-10 py-8">
-                        <div className="flex items-center gap-5">
-                          <span className="text-3xl filter grayscale group-hover:grayscale-0 transition-all">{c.flag}</span>
-                          <div>
-                            <p className="text-p !text-text-main !font-black !text-lg leading-tight tracking-tight group-hover:text-primary transition-colors">{c.country}</p>
-                            <p className="text-label !text-text-dim/60 font-black">{c.region}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-10 py-8">
-                        <div className="flex items-center gap-6 min-w-[180px]">
-                          <div className="flex-1 h-2 bg-bg-base rounded-full overflow-hidden shadow-inner">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${c.score}%` }}
-                              transition={{ duration: 1.5, delay: 0.5 + i * 0.1 }}
-                              className="h-full bg-primary shadow-[0_0_12px_rgba(37,226,244,0.5)] rounded-full"
-                            />
-                          </div>
-                          <span className="text-p !text-text-main font-black">{c.score}</span>
-                        </div>
-                      </td>
-                      <td className="px-10 py-8">
-                        <div className="flex items-center gap-2.5 text-primary">
-                          <ShieldCheck size={16} className="animate-pulse" />
-                          <span className="text-label">Verified</span>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={4} className="py-12 text-center">
+                        <div className="flex flex-col items-center justify-center gap-4 text-text-dim">
+                          <Loader2 className="animate-spin text-primary" size={32} />
+                          <p className="text-sm">Syncing matrix data...</p>
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    displayedCountries.map((c, i) => (
+                      <tr key={c.countryCode} className="hover:bg-primary/10 transition-colors group cursor-pointer">
+                        <td className="px-10 py-8 text-p !text-text-dim group-hover:text-primary">#{(i + 1).toString().padStart(2, '0')}</td>
+                        <td className="px-10 py-8">
+                          <div className="flex items-center gap-5">
+                            <span className="text-3xl filter grayscale group-hover:grayscale-0 transition-all">{c.flag}</span>
+                            <div>
+                              <p className="text-p !text-text-main !font-black !text-lg leading-tight tracking-tight group-hover:text-primary transition-colors">{c.country}</p>
+                              <p className="text-label !text-text-dim/60 font-black">{c.region}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-10 py-8">
+                          <div className="flex items-center gap-6 min-w-[180px]">
+                            <div className="flex-1 h-2 bg-bg-base rounded-full overflow-hidden shadow-inner">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${c.score}%` }}
+                                transition={{ duration: 1.5, delay: 0.5 + i * 0.1 }}
+                                className="h-full bg-primary shadow-[0_0_12px_rgba(37,226,244,0.5)] rounded-full"
+                              />
+                            </div>
+                            <span className="text-p !text-text-main font-black">{c.score}</span>
+                          </div>
+                        </td>
+                        <td className="px-10 py-8">
+                          <div className="flex items-center gap-2.5 text-primary">
+                            <ShieldCheck size={16} className="animate-pulse" />
+                            <span className="text-label">Verified</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -269,7 +295,7 @@ const Analytics = () => {
             <div className="space-y-6">
               <h4 className="text-3xl font-black tracking-tighter leading-none">Synthetic Benchmarking</h4>
               <p className="text-lg text-white/50 leading-relaxed font-serif italic pr-4">
-                "Effectiveness scores are normalized using SDID weights across a control pool of 480 regional nodes, accounting for seasonal volatility."
+                "Effectiveness scores are normalized using SDID weights across a control pool of regional nodes, accounting for seasonal volatility."
               </p>
             </div>
 
@@ -292,11 +318,19 @@ const Analytics = () => {
                 <Globe size={16} className="text-primary opacity-40"/>
              </div>
              <div className="space-y-6">
-               {[
-                 { region: 'Northern Europe', score: 92.4, trend: 1.2, color: 'bg-primary' },
-                 { region: 'East Asia', score: 78.1, trend: 4.5, color: 'bg-emerald-500' },
-                 { region: 'North America', score: 81.6, trend: -0.8, color: 'bg-orange-500' }
-               ].map((r, i) => (
+               {((() => {
+                  const envRaw = (import.meta.env.VITE_REGION_SCORES as string | undefined);
+                  if (envRaw) {
+                    try {
+                      return JSON.parse(envRaw) as Array<{ region: string; score: number; trend: number; color: string }>;
+                    } catch { /* fall through */ }
+                  }
+                  return [
+                    { region: 'Northern Europe', score: 92.4, trend: 1.2, color: 'bg-primary' },
+                    { region: 'East Asia', score: 78.1, trend: 4.5, color: 'bg-emerald-500' },
+                    { region: 'North America', score: 81.6, trend: -0.8, color: 'bg-orange-500' },
+                  ] as Array<{ region: string; score: number; trend: number; color: string }>;
+               })()).map((r, i) => (
                  <div key={i} className="flex items-center justify-between p-6 bg-bg-card rounded-[32px] border border-border-subtle shadow-sm group hover:border-primary/30 transition-all duration-500">
                    <div className="space-y-1">
                      <p className="text-p !text-text-main font-black tracking-tight">{r.region}</p>

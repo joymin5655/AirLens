@@ -14,13 +14,19 @@ const getEnv = (key: string, fallback?: string): string => {
 // Initial static configuration
 export const APP_CONFIG = {
   APP_NAME: 'AirLens',
-  VERSION: '1.1.0',
+  VERSION: '1.8.1',
   GITHUB_URL: 'https://github.com/joymin5655/AirLens',
   
   // API Configuration
-  WAQI_TOKEN: getEnv('VITE_WAQI_TOKEN'), 
+  // WAQI_TOKEN は waqi-proxy Edge Function 経由でサーバー側に隔離済み
   SUPABASE_URL: getEnv('VITE_SUPABASE_URL'),
   SUPABASE_ANON_KEY: getEnv('VITE_SUPABASE_ANON_KEY'),
+
+  // Polar (payments) — product IDs are public; API token lives server-side only
+  POLAR: {
+    PRODUCT_ID_PLUS: getEnv('VITE_POLAR_PRODUCT_ID_PLUS'),
+    PRODUCT_ID_PRO:  getEnv('VITE_POLAR_PRODUCT_ID_PRO'),
+  },
   
   // Assets & Data
   BASE_DATA_URL: `${import.meta.env.BASE_URL}data`,
@@ -73,7 +79,13 @@ export const loadRemoteConfig = async () => {
       .from('app_settings')
       .select('key, value');
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === 'PGRST116') {
+        console.log('ℹ️ app_settings table not initialized or empty. Using defaults.');
+        return;
+      }
+      throw error;
+    }
 
     if (data) {
       data.forEach((setting: { key: string; value: Record<string, unknown> }) => {

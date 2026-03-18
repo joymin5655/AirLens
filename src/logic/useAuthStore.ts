@@ -2,80 +2,88 @@ import { create } from 'zustand';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 
+export type PlanType = 'Free' | 'Plus' | 'Pro';
+
+interface Profile {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  plan: PlanType;
+  role: 'user' | 'admin' | 'ngo';
+  updated_at: string;
+}
+
 interface AuthStore {
   user: User | null;
-  isAdmin: boolean;
-  isAnonymous: boolean;
+  profile: Profile | null;
   loading: boolean;
+  initialized: boolean;
+  
   setUser: (user: User | null) => void;
+  setProfile: (profile: Profile | null) => void;
   setLoading: (loading: boolean) => void;
-  checkAdminStatus: (userId: string) => Promise<void>;
-  signInAnonymously: () => Promise<void>;
+  setInitialized: (initialized: boolean) => void;
+  
+  fetchProfile: (userId: string) => Promise<void>;
+  fetchUserProfile: (userId: string) => Promise<void>;
   signOut: () => Promise<void>;
+  
+  isPro: () => boolean;
+  isResearch: () => boolean;
+  isAdmin: () => boolean;
 }
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   user: null,
-  isAdmin: false,
-  isAnonymous: false,
+  profile: null,
   loading: true,
-  setUser: (user) => {
-    const isAdmin = !!user && user.app_metadata?.role === 'admin';
-    const isAnonymous = !!user?.is_anonymous;
+  initialized: false,
 
-    set({ user, isAdmin, isAnonymous, loading: false });
-
-    if (user && !isAdmin && !isAnonymous) {
-      get().checkAdminStatus(user.id);
-    }
-  },
+  setUser: (user) => set({ user }),
+  setProfile: (profile) => set({ profile }),
   setLoading: (loading) => set({ loading }),
-  
-  /**
-   * DB의 profiles 테이블을 조회하여 최신 권한 정보를 가져옵니다.
-   */
-  checkAdminStatus: async (userId: string) => {
+  setInitialized: (initialized) => set({ initialized }),
+
+  fetchUserProfile: async (userId: string) => {
+    return get().fetchProfile(userId);
+  },
+
+  fetchProfile: async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('role')
+        .select('*')
         .eq('id', userId)
         .single();
       
       if (!error && data) {
-        set({ isAdmin: data.role === 'admin' });
+        set({ profile: data as Profile });
+      } else {
+        console.warn('Profile fetch error:', error?.message);
       }
     } catch (err) {
-      console.warn('Failed to check admin status or profile not found:', err);
+      console.warn('Failed to fetch user profile:', err);
     }
   },
 
-  /**
-   * 익명 로그인 (세션 없을 때 자동 호출)
-   */
-  signInAnonymously: async () => {
-    try {
-      const { data, error } = await supabase.auth.signInAnonymously();
-      if (!error && data.user) {
-        set({ user: data.user, isAnonymous: true, isAdmin: false, loading: false });
-      }
-    } catch (err) {
-      console.warn('Anonymous sign-in failed:', err);
-      set({ loading: false });
-    }
-  },
-
-  /**
-   * 로그아웃 처리
-   */
   signOut: async () => {
     set({ loading: true });
     try {
       await supabase.auth.signOut();
-      set({ user: null, isAdmin: false, isAnonymous: false, loading: false });
+      set({ user: null, profile: null, loading: false });
     } catch (err) {
       console.error('Logout error:', err);
       set({ loading: false });
     }
-  }
+  },
+
+  isPro: () => {
+    const plan = get().profile?.plan;
+    return plan === 'Plus' || plan === 'Pro';
+  },
+
+  isResearch: () => get().profile?.plan === 'Pro',
+
+  isAdmin: () => get().profile?.role === 'admin',
 }));

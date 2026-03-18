@@ -1,9 +1,0 @@
-{
-  "version": "v0.0.1",
-  "model_type": "placeholder",
-  "target": "pm25",
-  "features": [],
-  "metrics": {},
-  "training_date": null,
-  "notes": "모델 학습 전 — local-models/에서 학습 후 이 폴더에 배포"
-}

@@ -1,40 +1,37 @@
 import { useState } from 'react';
-import { User, LogOut, Mail, Shield, Camera, Calendar, Edit2, Check, X, Sparkles, ArrowRight, Sun, Moon, Monitor, Globe, Trash2, Info } from 'lucide-react';
+import { User, LogOut, Mail, Shield, Edit2, Check, X, Globe, Trash2, CreditCard, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../logic/useAuthStore';
-import { useThemeStore } from '../logic/useThemeStore';
 import { supabase } from '../logic/supabase';
 import { APP_CONFIG } from '../logic/config';
 
 const Profile = () => {
-  const { user, isAdmin, isAnonymous, setUser, signOut } = useAuthStore();
-  const { theme, setTheme } = useThemeStore();
+  const { user, profile, fetchProfile, signOut, isPro, isAdmin } = useAuthStore();
   const { i18n } = useTranslation();
   const navigate = useNavigate();
 
   const [editingName, setEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(user?.user_metadata?.full_name || user?.email?.split('@')[0] || '');
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [nameInput, setNameInput] = useState(profile?.full_name || '');
   const [nameLoading, setNameLoading] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
   const handleSaveName = async () => {
-    if (!nameInput.trim()) return;
+    if (!nameInput.trim() || !user) return;
+    if (nameInput.trim().length > 100) return;
     setNameLoading(true);
     setNameError(null);
     try {
-      const { data, error } = await supabase.auth.updateUser({
-        data: { full_name: nameInput.trim() }
-      });
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: nameInput.trim() })
+        .eq('id', user.id);
+      
       if (error) throw error;
-      if (data.user) setUser(data.user);
+      await fetchProfile(user.id);
       setEditingName(false);
     } catch (err: unknown) {
       setNameError(err instanceof Error ? err.message : String(err));
@@ -44,80 +41,20 @@ const Profile = () => {
   };
 
   const handleClearData = () => {
-    if (window.confirm('Are you sure you want to clear all local data? This will reset your theme and language preferences.')) {
-      localStorage.clear();
-      window.location.reload();
+    if (!confirmClear) {
+      setConfirmClear(true);
+      return;
     }
+    localStorage.clear();
+    window.location.reload();
   };
 
-  if (!user) {
-    navigate('/auth');
-    return null;
-  }
-
-  const joinedAt = user.created_at
-    ? new Date(user.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
-    : null;
-
-  // Anonymous user — show upgrade CTA only
-  if (isAnonymous) {
-    return (
-      <div className="pt-28 pb-24 max-w-2xl mx-auto px-6 transition-colors duration-500">
-        <Helmet>
-          <title>Profile | AirLens</title>
-        </Helmet>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="narrative-card p-10 space-y-8 text-center"
-        >
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-xl">
-              <Sparkles size={32} className="text-primary" />
-            </div>
-            <div>
-              <h1 className="heading-lg text-2xl">Using Temporary Account</h1>
-              <p className="text-text-dim text-sm mt-1">Measurements are stored locally in this browser.</p>
-            </div>
-          </div>
-
-          <div className="space-y-3 text-left">
-            {[
-              'Permanent measurement history',
-              'Cross-device data synchronization',
-              'Personalized air quality reports',
-              'Policy bookmarks & alerts',
-            ].map((item) => (
-              <div key={item} className="flex items-center gap-3 p-3 bg-primary/5 rounded-xl">
-                <Check size={14} className="text-primary shrink-0" />
-                <span className="text-sm font-semibold text-text-main">{item}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-3 pt-2">
-            <button
-              onClick={() => navigate('/auth')}
-              className="btn-main w-full py-4 flex items-center justify-center gap-2"
-            >
-              Create Free Account <ArrowRight size={16} />
-            </button>
-            <button
-              onClick={handleSignOut}
-              className="w-full py-3 text-text-dim hover:text-text-main text-label transition-colors"
-            >
-              Continue later
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
+  if (!user || !profile) return null;
 
   return (
     <div className="pt-28 pb-24 max-w-2xl mx-auto px-6 transition-colors duration-500">
       <Helmet>
-        <title>Profile Settings | AirLens</title>
+        <title>Settings | AirLens Intelligence</title>
       </Helmet>
 
       <div className="space-y-6">
@@ -128,9 +65,9 @@ const Profile = () => {
         >
           {/* Header */}
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden shadow-xl">
-              {user.user_metadata?.avatar_url ? (
-                <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden shadow-xl">
+              {profile.avatar_url && /^https?:\/\//i.test(profile.avatar_url) ? (
+                <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <User size={28} className="text-primary" />
               )}
@@ -143,22 +80,20 @@ const Profile = () => {
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') setEditingName(false); }}
+                    maxLength={100}
                     className="flex-1 bg-bg-base border border-primary/30 rounded-xl px-3 py-1.5 text-sm font-black text-text-main outline-none focus:ring-2 focus:ring-primary/20"
                   />
                   <button onClick={handleSaveName} disabled={nameLoading} className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors">
-                    <Check size={14} />
-                  </button>
-                  <button onClick={() => { setEditingName(false); setNameError(null); }} className="p-1.5 rounded-lg hover:bg-text-main/10 text-text-dim transition-colors">
-                    <X size={14} />
+                    {nameLoading ? <X size={14} className="animate-pulse" /> : <Check size={14} />}
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 group">
                   <h1 className="heading-lg truncate">
-                    {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                    {profile.full_name || 'Climate Observer'}
                   </h1>
                   <button
-                    onClick={() => { setEditingName(true); setNameInput(user.user_metadata?.full_name || user.email?.split('@')[0] || ''); }}
+                    onClick={() => { setEditingName(true); setNameInput(profile.full_name || ''); }}
                     className="opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-text-main/10 text-text-dim transition-all"
                   >
                     <Edit2 size={12} />
@@ -167,170 +102,116 @@ const Profile = () => {
               )}
               {nameError && <p className="text-[10px] text-red-500 mt-1">{nameError}</p>}
               <span className="text-label text-primary">
-                {isAdmin ? 'Atmospheric Manager' : 'Climate Observer'}
+                {isAdmin() ? 'Atmospheric Manager' : 'Verified Member'}
               </span>
             </div>
           </div>
 
           {/* Info Fields */}
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex items-center gap-4 p-4 bg-text-main/5 rounded-2xl">
               <Mail size={16} className="text-primary shrink-0" />
               <div className="flex-1">
                 <p className="text-[10px] font-black text-text-dim uppercase tracking-widest">Email</p>
-                <p className="text-sm font-semibold text-text-main">{user.email}</p>
+                <p className="text-xs font-semibold text-text-main truncate">{profile.email}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-4 p-4 bg-text-main/5 rounded-2xl">
               <Shield size={16} className="text-primary shrink-0" />
               <div className="flex-1">
-                <p className="text-[10px] font-black text-text-dim uppercase tracking-widest">Account Type</p>
-                <p className="text-sm font-semibold text-text-main">{isAdmin ? 'Administrator' : 'Standard Member'}</p>
+                <p className="text-[10px] font-black text-text-dim uppercase tracking-widest">Role</p>
+                <p className="text-xs font-semibold text-text-main uppercase">{profile.role}</p>
               </div>
             </div>
-
-            <div className="flex items-center gap-4 p-4 bg-text-main/5 rounded-2xl border border-primary/20">
-              <Camera size={16} className="text-primary shrink-0" />
-              <div className="flex-1">
-                <p className="text-[10px] font-black text-text-dim uppercase tracking-widest">Plan</p>
-                <p className="text-sm font-semibold text-text-main">Free — 3 Camera AI measurements/day</p>
-              </div>
-              <button onClick={() => navigate('/pricing')} className="text-[9px] font-black text-primary hover:underline uppercase tracking-widest">Upgrade</button>
-            </div>
-
-            {joinedAt && (
-              <div className="flex items-center gap-4 p-4 bg-text-main/5 rounded-2xl">
-                <Calendar size={16} className="text-primary shrink-0" />
-                <div className="flex-1">
-                  <p className="text-[10px] font-black text-text-dim uppercase tracking-widest">Member Since</p>
-                  <p className="text-sm font-semibold text-text-main">{joinedAt}</p>
-                </div>
-              </div>
-            )}
           </div>
         </motion.div>
 
-        {/* Preferences — Migrated from settings.html */}
+        {/* Subscription & Plan */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="narrative-card p-10 space-y-8"
+          className="narrative-card p-10 space-y-6"
         >
-          <h2 className="heading-lg !text-xl flex items-center gap-3">
-            <span className="material-symbols-outlined text-primary">tune</span>
-            User Preferences
-          </h2>
-
-          <div className="space-y-6">
-            {/* Appearance */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-black text-text-main uppercase tracking-widest">Appearance</h3>
-                  <p className="text-[10px] text-text-dim">Choose your preferred visual theme</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-2 p-1 bg-text-main/5 rounded-2xl">
-                {[
-                  { id: 'light', icon: Sun, label: 'Light' },
-                  { id: 'dark', icon: Moon, label: 'Dark' },
-                  { id: 'system', icon: Monitor, label: 'System' },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setTheme(item.id as 'light' | 'dark' | 'system')}
-                    className={`flex flex-col items-center gap-1.5 py-3 rounded-xl transition-all ${
-                      theme === item.id 
-                        ? 'bg-bg-card text-primary shadow-sm border border-primary/20' 
-                        : 'text-text-dim hover:text-text-main hover:bg-bg-card/50'
-                    }`}
-                  >
-                    <item.icon size={16} />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">{item.label}</span>
-                  </button>
-                ))}
-              </div>
+          <div className="flex items-center justify-between">
+            <h2 className="heading-lg !text-xl flex items-center gap-3">
+              <CreditCard size={20} className="text-primary" />
+              Subscription Plan
+            </h2>
+            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isPro() ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-text-main/10 text-text-dim'}`}>
+              {profile.plan === 'Free' ? 'Free · 광고 포함' : profile.plan === 'Plus' ? 'Plus ✓' : 'Pro ✓'}
             </div>
+          </div>
 
-            {/* Language */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-black text-text-main uppercase tracking-widest">Language</h3>
-                  <p className="text-[10px] text-text-dim">Interface and data translation</p>
-                </div>
-                <Globe size={16} className="text-primary" />
-              </div>
-              <select
-                value={i18n.language}
-                onChange={(e) => i18n.changeLanguage(e.target.value)}
-                className="w-full bg-text-main/5 border border-text-main/10 rounded-2xl px-5 py-3.5 text-sm font-semibold text-text-main outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer appearance-none"
+          <div className="p-6 bg-gradient-to-br from-primary/10 to-transparent rounded-3xl border border-primary/20 relative overflow-hidden group">
+            <Sparkles className="absolute -right-4 -top-4 text-primary/10 group-hover:scale-110 transition-transform duration-700" size={120} />
+            <div className="relative z-10">
+              <h3 className="text-lg font-black text-text-main mb-1">
+                {profile.plan === 'Free' ? '광고 없이 더 쾌적하게' : profile.plan === 'Plus' ? '광고 없는 프리미엄 환경' : '연구자 전용 플랜'}
+              </h3>
+              <p className="text-xs text-text-dim leading-relaxed mb-4 max-w-sm">
+                {profile.plan === 'Free'
+                  ? 'Plus로 업그레이드하면 카메라 측정도 무제한이에요.'
+                  : profile.plan === 'Plus'
+                  ? '광고 없는 프리미엄 환경에서 AirLens를 사용하고 있어요.'
+                  : '연구자 전용 분석 도구를 모두 사용할 수 있어요.'}
+              </p>
+              <button
+                onClick={() => navigate('/pricing')}
+                className="btn-main !py-2.5 !px-6 !text-[11px] shadow-lg shadow-primary/20"
               >
-                <option value="en">English</option>
-                <option value="ko">한국어 (Korean)</option>
-                <option value="ja">日本語 (Japanese)</option>
-                <option value="zh">中文 (Chinese)</option>
-                <option value="es">Español (Spanish)</option>
-                <option value="fr">Français (French)</option>
-              </select>
+                {profile.plan === 'Free' ? 'View Pricing' : 'Manage Subscription'}
+              </button>
             </div>
           </div>
         </motion.div>
 
-        {/* Data & Security */}
+        {/* Preferences */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="narrative-card p-10 space-y-8"
         >
-          <h2 className="heading-lg !text-xl flex items-center gap-3">
-            <span className="material-symbols-outlined text-red-500">lock</span>
-            Data & Privacy
-          </h2>
-
-          <div className="space-y-4">
-            <div className="p-4 bg-red-500/5 rounded-2xl border border-red-500/10 flex items-start gap-4">
-              <Trash2 size={20} className="text-red-500 shrink-0 mt-1" />
-              <div className="flex-1">
-                <h4 className="text-sm font-black text-text-main uppercase tracking-widest">Clear Cache</h4>
-                <p className="text-[10px] text-text-dim mt-1 leading-relaxed">
-                  Permanently delete local storage, including theme settings and cached air quality data. 
-                  This will not delete your account from Supabase.
-                </p>
-                <button
-                  onClick={handleClearData}
-                  className="mt-3 text-[10px] font-black text-red-500 hover:underline uppercase tracking-widest"
-                >
-                  Confirm and Clear Data
-                </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            {/* Language */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Globe size={14} className="text-primary" />
+                <h3 className="text-xs font-black text-text-main uppercase tracking-widest">Language</h3>
               </div>
-            </div>
-
-            <div className="p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10 flex items-start gap-4">
-              <Info size={20} className="text-blue-500 shrink-0 mt-1" />
-              <div className="flex-1">
-                <h4 className="text-sm font-black text-text-main uppercase tracking-widest">Privacy Policy</h4>
-                <p className="text-[10px] text-text-dim mt-1">Your measurements are processed locally or in your private vault.</p>
-                <button className="mt-3 text-[10px] font-black text-blue-500 hover:underline uppercase tracking-widest">Read Full Policy</button>
-              </div>
+              <select
+                value={i18n.language}
+                onChange={(e) => i18n.changeLanguage(e.target.value)}
+                className="w-full bg-text-main/5 border border-text-main/10 rounded-xl px-4 py-2 text-xs font-bold text-text-main outline-none appearance-none cursor-pointer"
+              >
+                <option value="en">English</option>
+                <option value="ko">한국어</option>
+                <option value="ja">日本語</option>
+              </select>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-text-main/10">
+          <div className="pt-8 border-t border-text-main/10 flex flex-col sm:flex-row gap-4">
             <button
-              onClick={handleSignOut}
-              className="w-full py-4 flex items-center justify-center gap-3 text-red-500 bg-red-500/5 hover:bg-red-500/10 rounded-2xl transition-all text-label font-black border border-red-500/10"
+              onClick={signOut}
+              className="flex-1 py-4 flex items-center justify-center gap-3 text-red-500 bg-red-500/5 hover:bg-red-500/10 rounded-2xl transition-all text-xs font-black border border-red-500/10"
             >
-              <LogOut size={16} /> Sign Out from {APP_CONFIG.APP_NAME}
+              <LogOut size={16} /> Sign Out
+            </button>
+            <button
+              onClick={handleClearData}
+              onBlur={() => setConfirmClear(false)}
+              className={`px-6 py-4 flex items-center justify-center gap-3 transition-all text-xs font-black ${confirmClear ? 'text-red-500 hover:text-red-400' : 'text-text-dim hover:text-text-main'}`}
+            >
+              <Trash2 size={16} /> {confirmClear ? 'Confirm Clear?' : 'Clear Cache'}
             </button>
           </div>
         </motion.div>
 
         <p className="text-center text-[10px] text-text-dim font-black uppercase tracking-[0.3em] opacity-40">
-          Atmospheric Decoded · v1.1.0 Stable
+          AirLens Intelligence · {APP_CONFIG.APP_NAME} v1.9.0
         </p>
       </div>
     </div>

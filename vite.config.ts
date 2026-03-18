@@ -7,7 +7,7 @@ export default defineConfig(() => {
   // GitHub Pages deployment uses /AirLens/ base path.
   // Cloudflare Pages or local dev usually uses / (root).
   const isGithubPages = process.env.DEPLOY_TARGET === 'github';
-  
+
   return {
     base: isGithubPages ? '/AirLens/' : '/',
     plugins: [
@@ -16,7 +16,16 @@ export default defineConfig(() => {
     ],
     build: {
       outDir: 'dist',
-      sourcemap: true,
-    }
+      sourcemap: false,
+    },
+    server: {
+      proxy: {
+        '/ml-api': {
+          target: process.env.VITE_ML_API_URL || 'http://localhost:8000',
+          rewrite: (path) => path.replace(/^\/ml-api/, ''),
+          changeOrigin: true,
+        },
+      },
+    },
   }
 })
