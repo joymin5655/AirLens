@@ -39,6 +39,10 @@ const Pricing = () => {
 
     if (tierName === 'Plus') {
       const productId = import.meta.env.VITE_POLAR_PRODUCT_ID_PLUS;
+      if (!productId) {
+        toast.error('결제 설정이 아직 준비 중입니다. 잠시 후 다시 시도해주세요.');
+        return;
+      }
       const checkoutUrl = `https://buy.polar.sh/checkout?product_id=${productId}&metadata[user_id]=${user.id}`;
       window.open(checkoutUrl, '_blank');
       return;
