@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Globe from '../components/Globe';
 import AirQualityMarkers from '../components/AirQualityMarkers';
 import CityMarkers from '../components/CityMarkers';
-import { Globe as GlobeIcon, Info, Layers, ShieldCheck, ChevronLeft, MapPin, Sparkles, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import { Globe as GlobeIcon, Info, Layers, ShieldCheck, ChevronLeft, MapPin, Sparkles, Play, Pause, SkipBack, SkipForward, FlaskConical, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -195,6 +195,65 @@ const GlobeView = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* ── Coming Soon Overlay ─────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-lg"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="flex flex-col items-center gap-8 text-center max-w-md px-8"
+        >
+          {/* Icon */}
+          <div className="w-24 h-24 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shadow-[0_0_60px_rgba(37,226,244,0.15)]">
+            <FlaskConical className="text-primary w-10 h-10" />
+          </div>
+
+          {/* Badge */}
+          <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-1.5 rounded-full">
+            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">In Development</span>
+          </div>
+
+          {/* Title */}
+          <div className="space-y-3">
+            <h1 className="text-5xl font-black text-white tracking-tighter leading-none">
+              Globe <span className="italic font-serif font-light text-primary">Intelligence</span>
+            </h1>
+            <p className="text-white/50 text-sm leading-relaxed font-serif italic">
+              "3D 실시간 대기질 가시화 엔진 — DQSS 오버레이, 시계열 재생, NASA MAIAC 위성 융합 레이어가 준비 중입니다."
+            </p>
+          </div>
+
+          {/* Features coming */}
+          <div className="grid grid-cols-1 gap-3 w-full text-left">
+            {[
+              'DQSS Quality Overlay (ML-based)',
+              '7-Day Time-Series Playback',
+              'NASA MAIAC Satellite Layer',
+            ].map((feature) => (
+              <div key={feature} className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10">
+                <ShieldCheck size={14} className="text-primary shrink-0" />
+                <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest">{feature}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Back button */}
+          <Link
+            to="/today"
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-black font-black text-sm hover:scale-105 transition-transform shadow-[0_0_20px_rgba(37,226,244,0.3)]"
+          >
+            <ArrowLeft size={16} /> Return to Dashboard
+          </Link>
+        </motion.div>
+      </motion.div>
+      {/* ────────────────────────────────────────────────────────── */}
     </div>
   );
 };

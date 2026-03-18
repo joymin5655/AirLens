@@ -4,13 +4,18 @@ import PolicyTimelineChart from '../components/PolicyTimelineChart';
 import PolicyImpactCard from '../components/PolicyImpactCard';
 import ComparisonChart from '../components/ComparisonChart';
 import { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { fetchPolicyIndex, fetchCountryPolicy, fetchMLPolicyImpact } from '../logic/policyService';
 import type { PolicyIndexEntry, CountryPolicy, TimelineEvent } from '../logic/types';
 import { useDataQuery } from '../logic/useDataQuery';
+import { useAuthStore } from '../logic/useAuthStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 
 const PolicyView = () => {
+  const navigate = useNavigate();
+  const { isResearch } = useAuthStore();
   const [selectedCountry, setSelectedCountry] = useState<PolicyIndexEntry | null>(null);
   const [showSimulation, setShowSimulation] = useState(false);
 
@@ -136,6 +141,11 @@ const PolicyView = () => {
 
   const handleExport = () => {
     if (!activePolicy || !selectedCountry) return;
+    if (!isResearch()) {
+      toast.info('CSV 내보내기는 Pro 플랜 전용입니다. 업그레이드하면 원본 데이터를 다운로드할 수 있어요.');
+      navigate('/pricing');
+      return;
+    }
     const header = 'Date,Event,PM2.5 (µg/m³),Synthetic PM2.5 (µg/m³)\n';
     const rows = (mergedTimeline ?? activePolicy.timeline).map(t =>
       `${t.date},"${t.event.replace(/"/g, '""')}",${t.pm25},${t.syntheticPM25 ?? ''}`

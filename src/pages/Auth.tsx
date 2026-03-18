@@ -15,20 +15,29 @@ const Auth = () => {
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user) navigate(from, { replace: true });
+    if (user) {
+      // OAuth 콜백 후 location.state가 유실되므로 sessionStorage에서 목적지를 복원
+      const savedDest = sessionStorage.getItem('auth:redirectTo');
+      sessionStorage.removeItem('auth:redirectTo');
+      navigate(savedDest || from, { replace: true });
+    }
   }, [user, from, navigate]);
 
   const handleGoogleLogin = async () => {
     setLoading(true);
     setAuthError(null);
+    // OAuth는 외부 서버를 거치므로 React Router state가 유실됨 → sessionStorage에 보존
+    sessionStorage.setItem('auth:redirectTo', from);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + from,
+        // 앱 루트로 콜백 → Supabase가 토큰 처리 후 useEffect가 navigate 담당
+        redirectTo: window.location.origin + (import.meta.env.BASE_URL ?? '/'),
       },
     });
 
     if (error) {
+      sessionStorage.removeItem('auth:redirectTo');
       console.error('Login error:', error.message);
       setAuthError('로그인에 실패했습니다. 다시 시도해주세요.');
       setLoading(false);

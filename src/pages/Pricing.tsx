@@ -43,6 +43,17 @@ const Pricing = () => {
       window.open(checkoutUrl, '_blank');
       return;
     }
+
+    if (tierName === 'Pro') {
+      const productId = import.meta.env.VITE_POLAR_PRODUCT_ID_PRO;
+      if (!productId) {
+        window.open('mailto:research@airlens.earth?subject=Pro%20Plan%20Inquiry', '_blank');
+        return;
+      }
+      const checkoutUrl = `https://buy.polar.sh/checkout?product_id=${productId}&metadata[user_id]=${user.id}`;
+      window.open(checkoutUrl, '_blank');
+      return;
+    }
   };
 
   const updatePlan = async () => {
@@ -86,6 +97,22 @@ const Pricing = () => {
       icon: <Zap className="text-primary" size={24} />,
       btnText: plan === 'Plus' ? 'Current Plan' : 'Upgrade to Plus — $2.99/mo',
       highlight: true
+    },
+    {
+      name: 'Pro',
+      price: '$14.99',
+      unit: '/mo',
+      description: '정책 영향 분석(SDID), 데이터 다운로드, API가 필요한 연구자·NGO 전용 플랜.',
+      features: [
+        'Plus 모든 기능 포함',
+        'SDID 정책 영향 분석',
+        'CSV 원본 데이터 다운로드',
+        'API 액세스 (10k req/mo)',
+        '전용 연구자 지원'
+      ],
+      icon: <Database className="text-primary" size={24} />,
+      btnText: plan === 'Pro' ? 'Current Plan' : (import.meta.env.VITE_POLAR_PRODUCT_ID_PRO ? 'Upgrade to Pro — $14.99/mo' : 'Apply for Research Access'),
+      highlight: false
     }
   ];
 
@@ -109,8 +136,8 @@ const Pricing = () => {
         </p>
       </header>
 
-      {/* Main 2-tier grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+      {/* Main 3-tier grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
         {tiers.map((tier, i) => (
           <motion.div
             key={tier.name}
@@ -166,48 +193,6 @@ const Pricing = () => {
           </motion.div>
         ))}
       </div>
-
-      {/* Pro — Research & Institution section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mt-16 narrative-card border-dashed border-2 border-primary/20 p-8 sm:p-12 max-w-3xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-8"
-      >
-        <div className="p-4 bg-primary/10 rounded-2xl shrink-0">
-          <Database className="text-primary" size={32} />
-        </div>
-        <div className="flex-1 space-y-2">
-          <h4 className="heading-lg !text-xl">Pro · 연구자/NGO 전용</h4>
-          <p className="text-p text-sm italic !text-text-main/70 leading-relaxed">
-            정책 영향 분석(SDID), 데이터 다운로드, API가 필요한 전문가를 위한 플랜입니다. $14.99/mo
-          </p>
-          <ul className="mt-3 space-y-1">
-            {['SDID 정책 영향 분석', 'CSV 원본 데이터 다운로드', 'API 액세스 (10k req/mo)'].map((f) => (
-              <li key={f} className="flex items-center gap-2 text-xs text-text-dim font-semibold">
-                <Check size={12} className="text-primary shrink-0" strokeWidth={3} /> {f}
-              </li>
-            ))}
-          </ul>
-        </div>
-        {import.meta.env.VITE_POLAR_PRODUCT_ID_PRO ? (
-          <a
-            href={`https://buy.polar.sh/checkout?product_id=${import.meta.env.VITE_POLAR_PRODUCT_ID_PRO}&metadata[user_id]=${user?.id ?? ''}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-alt whitespace-nowrap shrink-0 flex items-center justify-center"
-          >
-            Upgrade to Pro
-          </a>
-        ) : (
-          <a
-            href="mailto:research@airlens.earth?subject=Pro%20Plan%20Inquiry"
-            className="btn-alt whitespace-nowrap shrink-0 flex items-center justify-center"
-          >
-            Apply for Research Access
-          </a>
-        )}
-      </motion.div>
 
       {/* Public Benefit Policy */}
       <div className="mt-12 narrative-card !bg-primary/5 border-dashed border-2 border-primary/20 p-8 sm:p-12 lg:p-16 text-center flex flex-col items-center gap-8">

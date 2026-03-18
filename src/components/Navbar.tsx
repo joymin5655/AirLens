@@ -8,7 +8,7 @@ import { APP_CONFIG } from '../logic/config';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SEARCH_PAGES = [
-  { name: 'Dashboard', path: '/', desc: 'Real-time air quality overview', icon: Home },
+  { name: 'Dashboard', path: '/today', desc: 'Real-time air quality overview', icon: Home },
   { name: 'Globe View', path: '/globe', desc: '3D atmospheric visualization', icon: Globe },
   { name: 'Camera AI', path: '/camera', desc: 'AI sky photo PM2.5 sensing', icon: Camera },
   { name: 'Analytics', path: '/analytics', desc: 'Global policy effectiveness rankings', icon: BarChart3 },
