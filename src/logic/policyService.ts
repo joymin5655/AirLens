@@ -44,14 +44,17 @@ export const fetchPolicyIndex = async (): Promise<PolicyIndexEntry[]> => {
   }
 
   // 기존 PolicyIndexEntry 타입에 맞춰 데이터 가공
-  return (data as unknown[]).map((item: any) => ({
-    country: item.country,
-    countryCode: item.countryCode,
-    region: item.region,
-    flag: item.flag,
-    policyCount: 0,
-    lastUpdated: item.updated_at
-  })) as PolicyIndexEntry[];
+  return (data as unknown[]).map((item) => {
+    const row = item as { country: string; countryCode: string; region: string; flag: string; updated_at: string };
+    return {
+      country: row.country,
+      countryCode: row.countryCode,
+      region: row.region,
+      flag: row.flag,
+      policyCount: 0,
+      lastUpdated: row.updated_at
+    };
+  }) as PolicyIndexEntry[];
 };
 
 /**

@@ -3,6 +3,13 @@ import * as THREE from 'three';
 import { fetchGlobalMarkers } from '../logic/dataService';
 import { getMarkerColor } from '../logic/airQualityService';
 
+interface Station {
+  location?: { geo?: [number, number] };
+  coordinates?: [number, number];
+  pollutants?: { pm25?: number };
+  pm25?: number;
+}
+
 // Helper to convert lat/lon to 3D Cartesian coordinates
 const latLonToVector3 = (lat: number, lon: number, radius: number) => {
   const phi = (90 - lat) * (Math.PI / 180);
@@ -16,7 +23,7 @@ const latLonToVector3 = (lat: number, lon: number, radius: number) => {
 };
 
 const AirQualityMarkers = () => {
-  const [stations, setStations] = useState<any[]>([]);
+  const [stations, setStations] = useState<Station[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -28,7 +35,7 @@ const AirQualityMarkers = () => {
 
   return (
     <group>
-      {stations.map((station: any, idx) => {
+      {stations.map((station, idx) => {
         // Handle both DB schema and WAQI JSON schema
         const geo = station.location?.geo || station.coordinates;
         if (!geo) return null;

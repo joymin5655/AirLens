@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import { useAuthStore } from './useAuthStore';
 
@@ -23,7 +24,7 @@ interface NotificationStore {
   unsubscribeFromNotifications: () => void;
 }
 
-let subscription: any = null;
+let subscription: RealtimeChannel | null = null;
 
 export const useNotificationStore = create<NotificationStore>((set, get) => ({
   notifications: [],

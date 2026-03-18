@@ -23,7 +23,7 @@ export interface AirQualityData {
   lastUpdated: string;
   grade: 'Good' | 'Moderate' | 'Unhealthy' | 'Very Unhealthy';
   dqss?: number;
-  iaqi?: any;
+  iaqi?: Record<string, { v: number }>;
   satellite?: SatelliteEstimation;
   mlDqss?: MLDQSSResult;
 }

@@ -12,6 +12,15 @@ import AdBanner from '../components/AdBanner';
 
 type SideTab = 'live' | 'history' | 'health';
 
+interface CaptureRecord {
+  id: string;
+  aqi_class: string;
+  pm25_est: number;
+  confidence: number;
+  city_name: string | null;
+  created_at: string;
+}
+
 const getHealthRisk = (pm25: number | null) => {
   if (!pm25) return { level: 'No Data', color: 'text-text-dim', bg: 'bg-text-main/5', desc: 'Perform a live analysis to see health impacts.', icon: Info };
   if (pm25 <= 12)  return { level: 'Good', color: 'text-green-500', bg: 'bg-green-500/10', desc: 'Air quality is satisfactory. No health risk for the general population.', icon: CheckCircle };
@@ -28,7 +37,7 @@ const CameraAI = () => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<SideTab>('live');
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<CaptureRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
   const { analyzeImage, analyzing, modelLoading, result, error } = useCameraAI();
@@ -96,11 +105,11 @@ const CameraAI = () => {
       });
       setSaved(true);
       if (activeTab === 'history') fetchHistory();
-    } catch (err: any) {
-      if (err.message === '이미 분석된 이미지입니다') {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message === '이미 분석된 이미지입니다') {
         toast.info(t('CAMERA.DUPLICATE_IMAGE'));
       } else {
-        toast.error(`Save failed: ${err.message}`);
+        toast.error(`Save failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
       }
     } finally {
       setSaving(false);

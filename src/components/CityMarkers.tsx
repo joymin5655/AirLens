@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { fetchMajorCities } from '../logic/dataService';
 
+interface City {
+  lat: number;
+  lon: number;
+}
+
 // Helper to convert lat/lon to 3D Cartesian coordinates
 const latLonToVector3 = (lat: number, lon: number, radius: number) => {
   const phi = (90 - lat) * (Math.PI / 180);
@@ -15,7 +20,7 @@ const latLonToVector3 = (lat: number, lon: number, radius: number) => {
 };
 
 const CityMarkers = () => {
-  const [cities, setCities] = useState<any[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -27,7 +32,7 @@ const CityMarkers = () => {
 
   return (
     <group>
-      {cities.map((city: any, idx) => {
+      {cities.map((city, idx) => {
         const position = latLonToVector3(city.lat, city.lon, 1.005);
         
         return (

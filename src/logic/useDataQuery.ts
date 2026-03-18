@@ -5,7 +5,7 @@ interface CacheEntry<T> {
   timestamp: number;
 }
 
-const cache = new Map<string, CacheEntry<any>>();
+const cache = new Map<string, CacheEntry<unknown>>();
 const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
 
 export function useDataQuery<T>(
@@ -17,7 +17,7 @@ export function useDataQuery<T>(
     if (queryKey && cache.has(queryKey)) {
       const entry = cache.get(queryKey)!;
       if (Date.now() - entry.timestamp < CACHE_TTL) {
-        return entry.data;
+        return entry.data as T;
       }
     }
     return null;
@@ -40,7 +40,7 @@ export function useDataQuery<T>(
       const entry = cache.get(queryKey)!;
       if (Date.now() - entry.timestamp < CACHE_TTL) {
         if (isMounted.current) {
-          setData(entry.data);
+          setData(entry.data as T);
           setLoading(false);
           setError(null);
         }

@@ -58,7 +58,7 @@ const LocalSensing = () => {
     return t(`ADVICE.${key}`, t('ADVICE.ANALYZING'));
   };
 
-  const currentPM = (aqiData?.iaqi as Record<string, Record<string, number>>)?.pm25?.v || 0;
+  const currentPM = aqiData?.iaqi?.pm25?.v || 0;
   const currentGrade = getAQIGrade(currentPM);
 
   // Use real WAQI forecast data when available; fall back to empty (no synthetic multiples)

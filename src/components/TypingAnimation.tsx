@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
 
+const Cursor = ({ visible }: { visible: boolean }) => (
+  <span
+    className="inline-block w-[2px] h-[1.1em] bg-current align-middle ml-0.5 transition-opacity duration-75"
+    style={{ opacity: visible ? 1 : 0 }}
+  />
+);
+
 interface TypingAnimationProps {
   phrases: string[];
   typingSpeed?: number;
@@ -44,9 +51,12 @@ const TypingAnimation = ({
         return () => clearTimeout(t);
       } else {
         // Last phrase fully typed — move to completed, stop
-        setCompletedLines(prev => [...prev, target]);
-        setCurrentText('');
-        setAllDone(true);
+        const t = setTimeout(() => {
+          setCompletedLines(prev => [...prev, target]);
+          setCurrentText('');
+          setAllDone(true);
+        }, 0);
+        return () => clearTimeout(t);
       }
       return;
     }
@@ -58,27 +68,20 @@ const TypingAnimation = ({
     return () => clearTimeout(t);
   }, [currentText, currentIndex, allDone, phrases, typingSpeed, pauseBetween]);
 
-  const Cursor = () => (
-    <span
-      className="inline-block w-[2px] h-[1.1em] bg-current align-middle ml-0.5 transition-opacity duration-75"
-      style={{ opacity: cursorVisible ? 1 : 0 }}
-    />
-  );
-
   return (
     <span className={`flex flex-col ${className}`}>
       {completedLines.map((line, i) => (
         <span key={i}>
           {prefix && <span className={`${prefixClassName} select-none mr-2`}>{prefix}</span>}
           {line}
-          {allDone && i === completedLines.length - 1 && <Cursor />}
+          {allDone && i === completedLines.length - 1 && <Cursor visible={cursorVisible} />}
         </span>
       ))}
       {!allDone && (
         <span>
           {prefix && <span className={`${prefixClassName} select-none mr-2`}>{prefix}</span>}
           {currentText}
-          <Cursor />
+          <Cursor visible={cursorVisible} />
         </span>
       )}
     </span>

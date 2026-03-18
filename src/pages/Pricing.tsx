@@ -33,7 +33,7 @@ const Pricing = () => {
         return;
       }
       setConfirmDowngrade(false);
-      await updatePlan('Free');
+      await updatePlan();
       return;
     }
 
@@ -45,7 +45,7 @@ const Pricing = () => {
     }
   };
 
-  const updatePlan = async (_newPlan: PlanType) => {
+  const updatePlan = async () => {
     if (!user) return;
     const { error } = await supabase.functions.invoke('cancel-subscription');
     if (error) {

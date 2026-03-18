@@ -7,6 +7,15 @@ import { fetchGlobalStats } from '../logic/dataService';
 import type { PolicyIndexEntry } from '../logic/types';
 import { useDataQuery } from '../logic/useDataQuery';
 
+interface GlobalStat {
+  label: string;
+  value: string | number;
+  unit: string;
+  trend: number;
+  status: string;
+  color: string;
+}
+
 /**
  * 실제 데이터 기반 결정론적 점수 계산
  */
@@ -27,7 +36,7 @@ const Analytics = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [regionFilter, setRegionFilter] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
-  const [globalStats, setGlobalStats] = useState<any[]>([]);
+  const [globalStats, setGlobalStats] = useState<GlobalStat[]>([]);
   const [statsError, setStatsError] = useState<string | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +48,14 @@ const Analytics = () => {
   };
 
   useEffect(() => {
-    loadGlobalStats();
+    void (async () => {
+      try {
+        const data = await fetchGlobalStats();
+        setGlobalStats(data);
+      } catch (err: unknown) {
+        setStatsError(err instanceof Error ? err.message : 'Failed to load stats');
+      }
+    })();
   }, []);
 
   useEffect(() => {

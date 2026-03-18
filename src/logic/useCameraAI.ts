@@ -38,7 +38,7 @@ const incrementDailyUsage = () => {
 
 export const useCameraAI = () => {
   const [analyzing, setAnalyzing] = useState(false);
-  const [modelLoading, setModelLoading] = useState(true);
+  const [modelLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   
@@ -47,7 +47,6 @@ export const useCameraAI = () => {
 
   // Inference runs server-side via ML API — no client-side ONNX loading needed
   useEffect(() => {
-    setModelLoading(false);
     console.log(`✅ ${APP_CONFIG.APP_NAME} Camera AI ready (server-side DINOv2 ONNX)`);
   }, []);
 
