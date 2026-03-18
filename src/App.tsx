@@ -1,4 +1,5 @@
 import { useLocation, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import ComingSoon from './pages/ComingSoon';
 import { AnimatePresence } from 'framer-motion';
 import { Suspense } from 'react';
 import Navbar from './components/Navbar';
@@ -52,8 +53,12 @@ const AppLayout = () => {
   );
 };
 
+const COMING_SOON = true;
+
 function App() {
   const location = useLocation();
+
+  if (COMING_SOON) return <ComingSoon />;
 
   return (
     <Suspense fallback={<PageLoader />}>
