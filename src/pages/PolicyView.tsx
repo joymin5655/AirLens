@@ -3,19 +3,18 @@ import CountrySelector from '../components/CountrySelector';
 import PolicyTimelineChart from '../components/PolicyTimelineChart';
 import PolicyImpactCard from '../components/PolicyImpactCard';
 import ComparisonChart from '../components/ComparisonChart';
-import { useState, useEffect } from 'react';
-import { fetchPolicyIndex, fetchCountryPolicy } from '../logic/policyService';
-import type { PolicyIndexEntry, CountryPolicy } from '../logic/types';
+import { useState, useCallback, useEffect } from 'react';
+import { fetchPolicyIndex, fetchCountryPolicy, fetchMLPolicyImpact } from '../logic/policyService';
+import type { PolicyIndexEntry, CountryPolicy, TimelineEvent } from '../logic/types';
+import { useDataQuery } from '../logic/useDataQuery';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 
 const PolicyView = () => {
-  const [countries, setCountries] = useState<PolicyIndexEntry[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<PolicyIndexEntry | null>(null);
-  const [policyData, setPolicyData] = useState<CountryPolicy | null>(null);
-  const [loading, setLoading] = useState(true);
-  
   const [showSimulation, setShowSimulation] = useState(false);
+
+  const [mlTimeline, setMlTimeline] = useState<TimelineEvent[] | null>(null);
 
   // Comparison state
   const [viewMode, setViewMode] = useState<'analysis' | 'comparison'>('analysis');
@@ -23,36 +22,51 @@ const PolicyView = () => {
   const [compareData, setCompareData] = useState<Record<string, CountryPolicy>>({});
   const [compareLoading, setCompareLoading] = useState(false);
 
+  // Fetch index
+  const { data: countries = [], loading: indexLoading, error: indexError } = useDataQuery<PolicyIndexEntry[]>(
+    'policy-index',
+    fetchPolicyIndex
+  );
+
+  // Auto-select first country if none selected
+  if (countries && countries.length > 0 && !selectedCountry && viewMode === 'analysis') {
+    setSelectedCountry(countries[0]);
+  }
+
+  // Fetch country policy
+  const { data: policyData, loading: policyLoading, error: policyError } = useDataQuery<CountryPolicy>(
+    selectedCountry && viewMode === 'analysis' ? `policy-${selectedCountry.countryCode}` : null,
+    useCallback(() => fetchCountryPolicy(selectedCountry!.countryCode), [selectedCountry])
+  );
+
+  const loading = indexLoading || policyLoading;
+  const fetchError = indexError || policyError;
+
+  // Fetch ML SDID synthetic control when country changes
   useEffect(() => {
-    const init = async () => {
-      try {
-        const indexData = await fetchPolicyIndex();
-        setCountries(indexData);
-        if (indexData.length > 0) {
-          handleSelect(indexData[0]);
-        }
-      } catch {
-        console.error('Failed to load policy index');
-      } finally {
-        setLoading(false);
-      }
-    };
-    init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!selectedCountry || viewMode !== 'analysis') {
+      setMlTimeline(null);
+      return;
+    }
+    let cancelled = false;
+    fetchMLPolicyImpact(selectedCountry.countryCode).then(mlData => {
+      if (cancelled || !mlData) return;
+      const raw = mlData['synthetic_control'];
+      if (!Array.isArray(raw)) return;
+      const mapped: TimelineEvent[] = (raw as Array<Record<string, unknown>>).map(row => ({
+        date: String(row['date'] ?? ''),
+        event: String(row['event'] ?? ''),
+        pm25: Number(row['pm25'] ?? 0),
+        syntheticPM25: row['synthetic_pm25'] != null ? Number(row['synthetic_pm25']) : undefined,
+      }));
+      setMlTimeline(mapped);
+    });
+    return () => { cancelled = true; };
+  }, [selectedCountry, viewMode]);
 
   const handleSelect = async (country: PolicyIndexEntry) => {
     if (viewMode === 'analysis') {
       setSelectedCountry(country);
-      setLoading(true);
-      try {
-        const data = await fetchCountryPolicy(country.countryCode);
-        setPolicyData(data);
-      } catch {
-        console.error('Failed to load country policy');
-      } finally {
-        setLoading(false);
-      }
     } else {
       // Comparison mode: Add to list if not already there
       if (!compareList.find(c => c.countryCode === country.countryCode)) {
@@ -83,9 +97,21 @@ const PolicyView = () => {
 
   const activePolicy = policyData?.policies[0];
 
+  // Merge ML syntheticPM25 into activePolicy timeline (by date key)
+  const mergedTimeline = activePolicy?.timeline
+    ? activePolicy.timeline.map(t => {
+        if (!mlTimeline) return t;
+        const mlRow = mlTimeline.find(m => m.date === t.date);
+        return mlRow?.syntheticPM25 != null
+          ? { ...t, syntheticPM25: mlRow.syntheticPM25 }
+          : t;
+      })
+    : activePolicy?.timeline;
+
   const computeSimulation = () => {
-    if (!activePolicy?.timeline?.length) return null;
-    const tl = [...activePolicy.timeline].sort(
+    const timeline = mergedTimeline ?? activePolicy?.timeline;
+    if (!timeline?.length) return null;
+    const tl = [...timeline].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
     if (tl.length < 2) return null;
@@ -111,7 +137,7 @@ const PolicyView = () => {
   const handleExport = () => {
     if (!activePolicy || !selectedCountry) return;
     const header = 'Date,Event,PM2.5 (µg/m³),Synthetic PM2.5 (µg/m³)\n';
-    const rows = activePolicy.timeline.map(t =>
+    const rows = (mergedTimeline ?? activePolicy.timeline).map(t =>
       `${t.date},"${t.event.replace(/"/g, '""')}",${t.pm25},${t.syntheticPM25 ?? ''}`
     ).join('\n');
     const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
@@ -133,6 +159,12 @@ const PolicyView = () => {
 
   return (
     <div className="pt-28 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-10 lg:gap-12 transition-colors duration-500">
+      {fetchError && (
+        <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          <ShieldAlert size={16} className="shrink-0" />
+          <span>데이터 로드 실패: {fetchError.message}</span>
+        </div>
+      )}
       <Helmet>
         <title>Policy Lab | AirLens Causal Intelligence</title>
         <meta name="description" content="Decode the pure policy effect on air quality using Synthetic Diff-in-Diff analysis." />
@@ -194,8 +226,17 @@ const PolicyView = () => {
               onClick={handleExport}
               disabled={!activePolicy}
               className="flex-1 sm:flex-none btn-alt flex items-center justify-center gap-3 group disabled:opacity-40 disabled:cursor-not-allowed"
+              title="Export Raw CSV Data"
             >
-              <Download size={20} className="text-primary group-hover:-translate-y-1 transition-transform" /> Export
+              <Download size={20} className="text-primary group-hover:-translate-y-1 transition-transform" /> CSV
+            </button>
+            <button
+              onClick={() => window.print()}
+              disabled={!activePolicy}
+              className="flex-1 sm:flex-none btn-alt flex items-center justify-center gap-3 group disabled:opacity-40 disabled:cursor-not-allowed"
+              title="Export Policy Brief as PDF"
+            >
+              <Layers size={20} className="text-primary group-hover:-translate-y-1 transition-transform" /> PDF
             </button>
           </div>
         </div>
@@ -212,7 +253,7 @@ const PolicyView = () => {
               {viewMode === 'comparison' && <span className="text-[9px] font-black text-primary bg-primary/10 px-2.5 py-1 rounded-full border border-primary/10">Limit 4</span>}
             </div>
             <CountrySelector 
-              countries={countries} 
+              countries={countries || []} 
               onSelect={handleSelect} 
               selectedCode={viewMode === 'analysis' ? selectedCountry?.countryCode : undefined} 
             />
@@ -294,9 +335,9 @@ const PolicyView = () => {
                         </div>
                         <div className="flex-1 w-full bg-bg-base rounded-[48px] border border-border-subtle p-10 relative z-10 backdrop-blur-3xl shadow-inner overflow-hidden group/chart">
                           <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover/chart:opacity-100 transition-opacity duration-1000"></div>
-                          <PolicyTimelineChart 
-                            timeline={activePolicy.timeline} 
-                            implementationDate={activePolicy.implementationDate} 
+                          <PolicyTimelineChart
+                            timeline={mergedTimeline ?? activePolicy.timeline}
+                            implementationDate={activePolicy.implementationDate}
                           />
                         </div>
                       </>

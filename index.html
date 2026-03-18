@@ -1,9 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/src/assets/react.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Content Security Policy: restricts plugins and base-tag injection while allowing GTM/Clarity -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; object-src 'none'; base-uri 'self';" />
     <title>AirLens — The Story of Our Atmosphere</title>
     <meta name="description" content="A storytelling intelligence platform for air quality and policy impact." />
 

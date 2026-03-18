@@ -1,6 +1,28 @@
 import { supabase } from './supabase';
 import type { PolicyIndexEntry, CountryPolicy } from './types';
 
+const ML_BASE: string = (import.meta.env.VITE_ML_API_URL as string | undefined) ?? '/ml-api';
+// NOTE: Do NOT add VITE_ML_API_KEY here — VITE_ prefix exposes secrets in the browser bundle.
+
+/**
+ * AirLens-models SDID 결과 조회.
+ * ML API 실패 시 null 반환 → caller가 Supabase fallback 처리.
+ */
+export const fetchMLPolicyImpact = async (countryCode?: string): Promise<Record<string, unknown> | null> => {
+  try {
+    const url = countryCode
+      ? `${ML_BASE}/api/policy-impact?country=${encodeURIComponent(countryCode)}`
+      : `${ML_BASE}/api/policy-impact`;
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+};
+
 /**
  * 모든 국가 리스트 가져오기 (Supabase countries 테이블 사용)
  */
@@ -27,9 +49,8 @@ export const fetchPolicyIndex = async (): Promise<PolicyIndexEntry[]> => {
     countryCode: item.countryCode,
     region: item.region,
     flag: item.flag,
-    policyCount: 0, // 나중에 별도 조인이나 필드로 처리 가능
-    lastUpdated: item.updated_at,
-    dataFile: `${item.country.toLowerCase().replace(/\s+/g, '-')}.json`
+    policyCount: 0,
+    lastUpdated: item.updated_at
   })) as PolicyIndexEntry[];
 };
 
